@@ -1,0 +1,136 @@
+<div class="main">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-2">
+          <p>rut</p>
+        </div>
+        <div class="col-md-6">
+          <p>99301000-6</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-2">
+          <p>razon social</p>
+        </div>
+        <div class="col-md-6">
+          <p>SEGUROS VIDA SECURITY PREVISIÓN S.A.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="lower">identificación del Declarante:</p>
+  <form class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
+    <div class="row">
+      <div class="col-md-6" [class.info--error]="checkIsValid('rut')">
+        <label class="info-label">RUT Declarante</label>
+        <input required type="text" class="info-input" placeholder="Ej: 12.345.678-9" formControlName="rut" maxlength="9"
+          formatRut appRutChars> <br />
+        <div *ngIf="form.get('rut').hasError('invalidRut') && form.get('rut').touched">
+          <span class="text-danger">RUN Incorrecto</span>
+        </div>
+        <div *ngIf="form.get('rut').hasError('InvalidNatural') && form.get('rut').touched">
+          <span class="text-danger">Se debe ingresar un rut de persona natural.</span>
+        </div>
+
+      </div>
+
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-6" [class.info--error]="checkIsValid('nombre')">
+            <label class="info-label">Nombre</label>
+            <input required type="text" class="info-input" placeholder="Ej: juan" formControlName="nombre" maxlength="50">
+            <div *ngIf="!form.get('nombre').valid && form.get('nombre').touched">
+              <span class="text-danger">Nombre Incorrecto</span>
+            </div>
+          </div>
+          <div class="col-md-6" [class.info--error]="checkIsValid('apellido')">
+            <label class="info-label">Apellido</label>
+            <input required type="text" class="info-input" placeholder="Ej: perez" formControlName="apellido" maxlength="50">
+            <div *ngIf="!form.get('apellido').valid && form.get('apellido').touched">
+              <span class="text-danger">Apellido Incorrecto</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-6 " [class.info--error]="checkIsValid('relacionEmpresa')">
+            <label class="info-label">Relación con la Empresa</label>
+            <input required type="text" class="info-input" placeholder="Ej: gerente" formControlName="relacionEmpresa"
+              maxlength="50">
+            <div *ngIf="!form.get('relacionEmpresa').valid && form.get('relacionEmpresa').touched">
+              <span class="text-danger">Relación con la Empresa Incorrecto</span>
+            </div>
+          </div>
+          <div class="col-md-6" [class.info--error]="checkIsValid('correo')">
+            <label class="info-label">Correo Electronico</label>
+            <input required type="text" class="info-input" placeholder="Ej: email@empresa.cl" formControlName="correo"
+              maxlength="50">
+            <div *ngIf="!form.get('correo').valid && form.get('correo').touched">
+              <span class="text-danger">Correo Incorrecto</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-md-12">
+        <p class="lower bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
+
+        <p class="lower text-justify">Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
+          o extranjera,
+          que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de los
+          derechos a voto de su empresa.
+          Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
+          sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
+          derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
+        <div class="info mb-4">
+          <button class="btn orange" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
+            Propietario </button>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">rut</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Participación</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="lstBeneficiarios.length" >
+            <tr *ngFor="let beneficiario of lstBeneficiarios ">
+              <th scope="row">{{beneficiario.rut}}</th>
+              <td>{{beneficiario.nombre}} {{beneficiario.apellido}}</td>
+              <td>{{beneficiario.participacion}}</td>
+              <td><button class="btn btn-danger pl-2 pr-2"><i class="fas fa-trash-alt"></i></button></td>
+            </tr>
+
+          </tbody>
+          <div *ngIf="lstBeneficiarios.length===0" >
+            <h6 class="text-center">no tiene beneficiarios agregados.</h6>
+          </div>
+        </table>
+      </div>
+    </div>
+
+    <div class="info">
+      <div *ngIf="!loading">
+        <input type="submit" class="btn orange" value="Enviar Declaración" />
+      </div>
+      <div class="info" *ngIf="loading">
+        <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
+      </div>
+      <div class="info">
+        <br>
+        <label class="info-error">{{mensaje}}</label>
+      </div>
+    </div>
+  </form>
+</div>
+<app-modal-agregarpropietario></app-modal-agregarpropietario>

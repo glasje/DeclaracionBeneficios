@@ -1,0 +1,6 @@
+{
+    "base": {"path": "", "breadcrumbs":"Home"},
+    "urlErronea": {"path": "**", "breadcrumbs":"Home"},
+    "error": {"path": "error", "breadcrumbs":"Error"},
+    "suscripcionVirtual": {"path": ":token", "breadcrumb":"Suscripcion Virtual"}
+}

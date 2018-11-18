@@ -1,0 +1,25 @@
+{
+    "Error" : {
+        "volverIntentar" : "Se ha generado un error, favor volver a intentar.",
+        "eliminarGrupoFamiliar" : "Se ha generado un error al eliminar, favor volver a intentar",
+        "eliminarBeneficiario" : "Se ha generado un error al eliminar, favor volver a intentar",
+        "aceptarDeclaracion" : "Debe aceptar la declaración para poder continuar",
+        "eliminarPreexistencia" : "Se ha generado un error al eliminar, favor volver a intentar",
+        "DatosTokenInvalido" : "Los datos ingresados no coinciden",
+        "DatosTokenPersiste" : "Si el problema persiste por favor comuníquese con nuestro CALL CENTER"
+
+    },
+    "Ok" : {
+        "enviarSuscripcion" : "Se ha enviado correctamente su incorporación al seguro colectivo.",
+        "eliminarGrupoFamiliar" : "Se ha eliminado correctamente ha {0}",
+        "agregarFamiliar" : "Se ha agregado correctamente la información de {0}",
+        "actualizarFamiliar" : "Se ha actualizado correctamente la información de {0}",
+        "eliminarBeneficiario" : "Se ha eliminado correctamente ha {0}",
+        "agregarBeneficiario" : "Se ha agregado correctamente la información de {0}",
+        "actualizarBeneficiario" : "Se ha actualizado correctamente la información de {0}",
+        "agregarPreexistencia" : "Se ha agregado correctamente la enfermedad",
+        "eliminarPreexistencia" : "Se ha eliminado correctamente",
+        "actualizar" : "Se ha actualizado correctamente",
+        "agregarActividadRiesgosa" : "Se ha agregado la actividad correctamente"
+    }
+}

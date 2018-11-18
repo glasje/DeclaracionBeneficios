@@ -23,7 +23,11 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/assets/dist/css/main.css",
+              "src/assets/dist/icons/style.css",
+              "src/assets/dist/icons2/style.css",
+              "node_modules/loaders.css/loaders.min.css"
             ],
             "scripts": []
           },
