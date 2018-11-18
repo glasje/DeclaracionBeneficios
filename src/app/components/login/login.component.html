@@ -1,1 +1,74 @@
-<button class="btn orange" routerLink="/declaracion" routerLinkActive="active"> ir</button>
+<script src='https://www.google.com/recaptcha/api.js'></script>
+<script src="http://10.62.4.76:8180/auth/js/keycloak.js"></script>
+
+<div class="title_login">
+  <h2 class="title_big">Declaración Jurada para la identificación de Beneficiarios Finales para Personas Jurídicas (propietarios o controladores) </h2>
+</div>
+<form class="m_form" *ngIf="!existsProcess" [formGroup]="form" (ngSubmit)="formSubmit()">
+  <div class="login">
+    <div class="info" [class.info--error]="checkIsValid('rut') === true">
+      <label class="info-label">RUT empresa</label>
+      <input required type="text" class="info-input" placeholder="Ej: 12.345.678-9" formControlName="rut" maxlength="9"
+        formatRut appRutChars> <br />
+
+      <div *ngIf="form.get('rut').hasError('invalidRut') && form.get('rut').touched">
+        <span class="info-error">RUN Incorrecto</span>
+      </div>
+
+    </div>
+      
+    <div class="info" [class.info--error]="checkIsValid('recaptchaReactive') === true">
+      <div class="captcha">
+        <re-captcha formControlName="recaptchaReactive"></re-captcha>
+        <div *ngIf="form.get('recaptchaReactive').hasError('required') && form.get('recaptchaReactive').touched">
+          <span class="info-error">Captcha no valida</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="info">
+      <div *ngIf="!loading">
+        <input type="submit" class="btn orange" value="Continuar" />
+      </div>      
+      <div class="info" *ngIf="loading">
+        <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
+      </div>
+      <div class="info">
+          <br>
+          <label class="info-error">{{mensaje}}</label>
+       </div>
+    </div>
+  </div>
+</form>
+
+<form class="m_form" *ngIf="existsProcess" [formGroup]="formPassword" (ngSubmit)="formPasswordSubmit()">
+  <div class="login">
+    <div class="login-icon">
+      <span class="icon-user-circle-o"></span>
+      <h2 class="title_big">SEGUROS VIDA SECURITY PREVISIÓN S.A.</h2>
+    </div>
+
+    <div class="info" *ngIf="isClient">
+      <label class="info-label">Ingresa tu contraseña</label>
+      <input type="password" class="info-input" placeholder="Ej: ***************" formControlName="password"> <br />
+      <div *ngIf="formPassword.get('password').hasError('required') && formPassword.get('password').touched">
+        <span class="info-error">Debe ingresar su contraseña</span>
+      </div>
+    </div>
+
+    <div class="info">
+      <span class="info-error">{{error}}</span>
+      <br><br>
+    </div>
+
+    <div class="info">
+      <div class="button" *ngIf="!loading">
+        <button class="btn orange">Ingresar</button>
+      </div>
+      <div class="info" *ngIf="loading">         
+        <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
+        <br>
+      </div>
+    </div>
+  </div>
+</form>

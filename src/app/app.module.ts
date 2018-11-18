@@ -5,6 +5,10 @@ import { NgModule, LOCALE_ID } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import localeCL from '@angular/common/locales/es-CL';
 
+// Captcha Google
+import { RecaptchaModule, RECAPTCHA_SETTINGS, RecaptchaSettings } from 'ng-recaptcha';
+import { RecaptchaFormsModule } from 'ng-recaptcha/forms';
+
 // COMPONENTS
 import { AppComponent } from './app.component';
 import { LoginComponent } from './components/login/login.component';
@@ -25,7 +29,6 @@ import { routing } from './app.routing';
 import { LoadersCssModule } from 'angular2-loaders-css';
 import { Ng2Rut } from 'ng2-rut';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ModalAgregarpropietarioComponent } from './components/modal-agregarpropietario/modal-agregarpropietario.component';
 
 registerLocaleData(localeCL);
 
@@ -38,7 +41,7 @@ registerLocaleData(localeCL);
     PhoneCharDirective,
     OnlyNumbersDirective,
     DisableControlDirective,
-    ModalAgregarpropietarioComponent
+
   ],
   imports: [
     BrowserModule,
@@ -47,10 +50,17 @@ registerLocaleData(localeCL);
     FormsModule,
     Ng2Rut,
     routing,
-    LoadersCssModule
+    LoadersCssModule,
+    RecaptchaModule.forRoot(),
+    RecaptchaFormsModule,
   ],
   providers: [
-    { provide: LOCALE_ID, useValue: 'es-CL' }
+    { provide: LOCALE_ID, useValue: 'es-CL' },
+    {provide: RECAPTCHA_SETTINGS,
+      useValue: {
+        siteKey: '6LeyAnMUAAAAAEW8Pr1slyaqXBHcGXshWmZxR5hm',
+      } as RecaptchaSettings,
+    }
   ],
   bootstrap: [AppComponent]
 })

@@ -23,8 +23,10 @@
     "angular2-loaders-css": "^2.0.1",
     "boostrap": "^2.0.0",
     "core-js": "^2.5.4",
+    "ng-recaptcha": "^4.2.1",
     "ng2-rut": "^0.2.3",
     "rxjs": "~6.2.0",
+    "sweetalert2": "^7.29.0",
     "zone.js": "~0.8.26"
   },
   "devDependencies": {

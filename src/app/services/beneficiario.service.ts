@@ -23,6 +23,13 @@ export class BeneficiarioService {
   AgregarBeneficiario(beneficiario): Beneficiario[]{
     this.lstBeneficiarios.push(beneficiario);
     this.change.emit(true);
-    return this.lstBeneficiarios
+    return this.lstBeneficiarios;
+  }
+
+  EliminarBeneficiario(beneficiario): Beneficiario[]{
+    let rut = beneficiario.rut;
+
+    this.lstBeneficiarios= this.lstBeneficiarios.filter(beneficiario=>beneficiario.rut!==rut);
+    return this.lstBeneficiarios;
   }
 }

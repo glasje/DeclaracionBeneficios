@@ -1,6 +1,7 @@
 import { FormControl, ValidatorFn, AbstractControl } from '@angular/forms';
 import { Injectable } from '@angular/core';
 import { isNullOrUndefined } from 'util';
+import { BeneficiarioService } from '../services/beneficiario.service';
 declare function require(name: string);
 const rutHelper = require('rut-helpers');
 
@@ -9,6 +10,9 @@ const rutHelper = require('rut-helpers');
  */
 export class RutValidator {
 
+  constructor(private _beneficiarioService : BeneficiarioService){
+
+  }
   /**
    * Valida un rut.
    * @param control Objecto que contiene los datos a validar.
