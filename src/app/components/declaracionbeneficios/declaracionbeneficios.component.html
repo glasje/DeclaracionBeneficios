@@ -3,7 +3,7 @@
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-2">
-          <p>rut</p>
+          <p>RUT</p>
         </div>
         <div class="col-md-6">
           <p>99301000-6</p>
@@ -13,7 +13,7 @@
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-2">
-          <p>razon social</p>
+          <p>Razon Social</p>
         </div>
         <div class="col-md-6">
           <p>SEGUROS VIDA SECURITY PREVISIÓN S.A.</p>
@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <p class="lower">identificación del Declarante:</p>
+  <p class=" ">Identificación del Declarante:</p>
   <form class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
     <div class="row">
       <div class="col-md-6" [class.info--error]="checkIsValid('rut')">
@@ -31,7 +31,7 @@
         <input required type="text" class="info-input" placeholder="Ej: 12.345.678-9" formControlName="rut" maxlength="9"
           formatRut appRutChars> <br />
         <div *ngIf="form.get('rut').hasError('invalidRut') && form.get('rut').touched">
-          <span class="text-danger">RUN Incorrecto</span>
+          <span class="text-danger">RUT Incorrecto</span>
         </div>
         <div *ngIf="form.get('rut').hasError('InvalidNatural') && form.get('rut').touched">
           <span class="text-danger">Se debe ingresar un rut de persona natural.</span>
@@ -79,9 +79,9 @@
 
       </div>
       <div class="col-md-12">
-        <p class="lower bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
+        <p class="  bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
 
-        <p class="lower text-justify">Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
+        <p class="  text-justify"> Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
           o extranjera,
           que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de los
           derechos a voto de su empresa.
@@ -98,7 +98,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">rut</th>
+              <th scope="col">Rut</th>
               <th scope="col">Nombre</th>
               <th scope="col">Participación</th>
               <th scope="col"></th>
@@ -193,10 +193,10 @@
       <div class="modal-footer">
         <ul class="li p-0">
           <li>
-            <p class=" lower bold ">Propietario con participación mayor o igual a 10%</p>
+            <p class="   bold ">Propietario con participación mayor o igual a 10%</p>
           </li>
           <li>
-            <p class=" lower">Identifique las personas naturales que tienen una participación en la Empresa
+            <p class="  ">Identifique las personas naturales que tienen una participación en la Empresa
               igual o mayor al 10%. </p>
           </li>
         </ul>
