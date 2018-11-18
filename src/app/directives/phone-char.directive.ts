@@ -21,14 +21,18 @@ export class PhoneCharDirective {
    */
   @HostListener('keydown', ['$event']) onKeyDown($event: any) {
     const key = $event.which || $event.keyCode;
+    console.log('coma',key)
     if ((key >= 48 && key <= 57) || // numbers
         (key >= 96 && key <= 105) || // numbers keypad
+        key === 188 ||
         key === 187 || // SUPR
         key === 46 || // SUPR
         key === 39 || // ARROW RIGHT
         key === 37 || // ARROW LEFT
         key === 9 || // TAB
         key === 8 // DELETE
+         //,
+        
     ) {
       return true;
     } else {

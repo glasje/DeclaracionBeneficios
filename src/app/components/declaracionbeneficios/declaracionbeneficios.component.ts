@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { RutValidator } from 'src/app/validators';
+import { RutValidator} from 'src/app/validators';
 import { BeneficiarioService } from 'src/app/services/beneficiario.service';
 import { Beneficiario } from 'src/app/models/beneficiario';
 import swal from 'sweetalert2'
@@ -18,7 +18,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   formAgregar: FormGroup;
   beneficiario: Beneficiario;
   validacion: boolean;
-
+  porcentajeAcumulado : number;
   constructor(private _beneficiarioService: BeneficiarioService) {
     //Form declaracion de beneficios
     this.form = new FormGroup({
@@ -50,7 +50,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         updateOn: 'blur'
       }),
       participacion: new FormControl(null, {
-        validators: [Validators.required],
+        validators: [Validators.required,],
         updateOn: 'blur'
       }),
       nombreAgregar: new FormControl(null, {
@@ -65,13 +65,11 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     });
     this.lstBeneficiarios = [];
     this.validacion = true;
+    this.porcentajeAcumulado=0;
   }
 
   ngOnInit() {
     //this.lstBeneficiarios= this._beneficiarioService.ObtenerBeneficiarios();
-    if (this._beneficiarioService.change) {
-      this.ObtenerBeneficiarios();
-    };
   }
   public checkIsValid(field: string) {
     return (this.form.get(field).invalid && (this.form.get(field).dirty || this.form.get(field).touched));
@@ -92,18 +90,19 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   }
   ObtenerBeneficiarios(): Beneficiario[] {
     this.lstBeneficiarios = this._beneficiarioService.ObtenerBeneficiarios();
+    this.CalcularPorcentaje();
     return this.lstBeneficiarios;
   }
 
   AgregarParticipante() {
     let lst = this._beneficiarioService.lstBeneficiarios;
     this.validacion = true;
-    lst.forEach(element => {
+    /* lst.forEach(element => {
       if (element.rut === this.formAgregar.get('rutAgregado').value) {
         console.log('reee');
         this.validacion = this.formAgregar.invalid;
       }
-    })
+    }) */
     if (this.validacion) {
       if (this.formAgregar.valid) {
         this.beneficiario = new Beneficiario();
@@ -113,8 +112,9 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         this.beneficiario.apellido = this.formAgregar.get('apellidoAgregar').value;
         this.beneficiario.participacion = this.formAgregar.get('participacion').value;
         this._beneficiarioService.AgregarBeneficiario(this.beneficiario);
-        this.formAgregar.reset();
-
+        this.ObtenerBeneficiarios();
+        /* this.formAgregar.reset(); */
+        
 
       } else {
         Object.keys(this.formAgregar.controls).forEach(key => {
@@ -123,6 +123,24 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       }
     }
 
+  }
+
+  CalcularPorcentaje(){
+    let suma: number;
+    suma=0;
+    console.log(this.lstBeneficiarios);
+    if(this.lstBeneficiarios.length>0){
+      this.lstBeneficiarios.forEach(element => {
+        console.log('for',element.participacion);
+        let valor = element.participacion.toString().replace(",",".")
+        suma= suma+parseFloat(valor);
+      });
+    }
+    console.log('for',suma)
+
+    this.porcentajeAcumulado=suma;
+    console.log(this.porcentajeAcumulado)
+    return this.porcentajeAcumulado;
   }
 
   EliminarBeneficiario(beneficiario) {
@@ -139,12 +157,13 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       if (result.value) {
         swal(
           'Beneficiario eliminado',
-          'se a eliminado correctamente',
+          'se ha eliminado correctamente',
           'success'
         )
-        console.log('bene', beneficiario);
+
         this._beneficiarioService.EliminarBeneficiario(beneficiario);
         this.ObtenerBeneficiarios();
+
       }
     })
 

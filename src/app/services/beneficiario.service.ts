@@ -6,8 +6,6 @@ import { DeclaracionbeneficiosComponent } from '../components/declaracionbenefic
   providedIn: 'root'
 })
 export class BeneficiarioService {
-  @Output() change: EventEmitter<boolean> = new EventEmitter();
-
   lstBeneficiarios: Beneficiario[];
   beneficiario: Beneficiario;
   constructor( ) { 
@@ -22,7 +20,7 @@ export class BeneficiarioService {
 
   AgregarBeneficiario(beneficiario): Beneficiario[]{
     this.lstBeneficiarios.push(beneficiario);
-    this.change.emit(true);
+
     return this.lstBeneficiarios;
   }
 

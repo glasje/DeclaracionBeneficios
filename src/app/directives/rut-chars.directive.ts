@@ -22,6 +22,7 @@ export class RutCharsDirective {
    */
   @HostListener('keydown', ['$event']) onKeyDown($event: any) {
     const key = $event.which || $event.keyCode;
+    
     if ((key >= 48 && key <= 57) || // numbers
         (key >= 96 && key <= 105) || // numbers keypad
         key === 110 || // . keypad
