@@ -50,7 +50,19 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       
       let rut = this.form.get('rut').value;
-      this._loginService.ValidarRut(rut).subscribe(
+      setTimeout(() => {
+        if(rut==='775539003'){
+          this.existsProcess=true;
+              this.loading = false;
+              this.isClient=true;
+        }else{
+          this.mensaje= 'Rut incorrecto';
+              this.loading=false;
+              this.form.reset();
+        }
+      }, 2000);
+      
+ /*      this._loginService.ValidarRut(rut).subscribe(
         data =>{ 
           console.log('data',data);
           this.empresa=data;
@@ -69,7 +81,7 @@ export class LoginComponent implements OnInit {
           console.error(err);
           this.loading = false;
         }
-      ); 
+      );  */
     }
     else{
       Object.keys(this.form.controls).forEach(key => {
@@ -87,18 +99,26 @@ export class LoginComponent implements OnInit {
         let rut = rutPipe.transform(this.form.get('rut').value).replace('-',''); 
         rut = rut.substring(0,rut.length-1).replace('.','').replace('.','');   
         console.log('retu',rut);
-        let clave = (this.isClient) ? this.formPassword.get('password').value : this.formPassword.get('numeroSerie').value;
+        let clave =  this.formPassword.get('password').value;
         let empresa ={
           rut:rut,
           password :clave
         }
-       /*  setTimeout(() => {
-          
-        }, 1000);   */
-        this._loginService.ValidarPassword(empresa).subscribe(
+        
+         setTimeout(() => {
+          if(clave==='P2ssw0rd'){
+            this.router.navigate(['/declaracion']);
+            this.loading = false;
+          }else{
+            this.error='clave incorrecta';
+            this.loading = false;
+            this.formPassword.reset();
+          }
+        }, 1000);   
+        /* this._loginService.ValidarPassword(empresa).subscribe(
           data=>{
             console.log('data',data);
-          this.empresa=data;
+          this.empclresa=data;
           console.log('emopresa',this.empresa.data);
           if(this.empresa.data.existe){
             this.router.navigate(['/declaracion']);
@@ -112,7 +132,7 @@ export class LoginComponent implements OnInit {
           },error=>{
             console.log('error',error);
           }
-        )
+        ) */
                    
     }else{     
         Object.keys(this.formPassword.controls).forEach(key => {

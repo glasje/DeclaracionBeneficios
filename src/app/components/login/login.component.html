@@ -19,7 +19,7 @@
       
     <div class="info" [class.info--error]="checkIsValid('recaptchaReactive') === true">
       <div class="captcha">
-        <re-captcha formControlName="recaptchaReactive"></re-captcha>
+        <re-captcha formControlName="recaptchaReactive" ></re-captcha>
         <div *ngIf="form.get('recaptchaReactive').hasError('required') && form.get('recaptchaReactive').touched">
           <span class="info-error">Captcha no valida</span>
         </div>
@@ -45,7 +45,7 @@
   <div class="login">
     <div class="login-icon">
       <span class="icon-user-circle-o"></span>
-      <h2 class="title_big">{{empresa.data.razonSocial |uppercase }}</h2>
+      <h2 class="title_big">Nombre empresa</h2>
     </div>
 
     <div class="info" *ngIf="isClient">

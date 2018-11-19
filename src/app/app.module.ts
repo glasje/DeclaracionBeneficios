@@ -60,7 +60,7 @@ registerLocaleData(localeCL);
     { provide: LOCALE_ID, useValue: 'es-CL' },
     {provide: RECAPTCHA_SETTINGS,
       useValue: {
-        siteKey: '6LfFlHsUAAAAABkmRJKuZzqTiVIasAAaEJqz6NOe',
+        siteKey: '6LcOl3sUAAAAAOKFGKEGOxMWysfS1LYJ0oYW-3bs',
       } as RecaptchaSettings,
     }
   ],
