@@ -8,9 +8,11 @@ import { DeclaracionbeneficiosComponent } from '../components/declaracionbenefic
 export class BeneficiarioService {
   lstBeneficiarios: Beneficiario[];
   beneficiario: Beneficiario;
+  porcentajeAcumulado : number;
   constructor( ) { 
     this.beneficiario = new Beneficiario();
     this.lstBeneficiarios=[];
+    this.porcentajeAcumulado=0;
   }
 
   ObtenerBeneficiarios(): Beneficiario[]{

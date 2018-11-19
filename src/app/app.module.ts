@@ -29,6 +29,7 @@ import { routing } from './app.routing';
 import { LoadersCssModule } from 'angular2-loaders-css';
 import { Ng2Rut } from 'ng2-rut';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { LoginService } from './services/login.service';
 
 registerLocaleData(localeCL);
 
@@ -55,10 +56,11 @@ registerLocaleData(localeCL);
     RecaptchaFormsModule,
   ],
   providers: [
+    LoginService,
     { provide: LOCALE_ID, useValue: 'es-CL' },
     {provide: RECAPTCHA_SETTINGS,
       useValue: {
-        siteKey: '6LeyAnMUAAAAAEW8Pr1slyaqXBHcGXshWmZxR5hm',
+        siteKey: '6LfFlHsUAAAAABkmRJKuZzqTiVIasAAaEJqz6NOe',
       } as RecaptchaSettings,
     }
   ],

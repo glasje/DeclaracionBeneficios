@@ -23,8 +23,9 @@
     </div>
   </div>
 
-  <p class=" ">Identificación del Declarante:</p>
-  <form class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
+
+  <form *ngIf="!existsProcess" class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
+    <p class=" ">Identificación del Declarante:</p>
     <div class="row">
       <div class="col-md-6" [class.info--error]="checkIsValid('rut')">
         <label class="info-label">RUT Declarante</label>
@@ -88,9 +89,10 @@
           Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
           sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
           derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
-        <div class="info mb-4"  >
-           <!--  *ngIf="form.valid && lstBeneficiarios.length<10 && porcentajeAcumulado<100" -->
-          <button [disabled]="!form.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99" class="btn orange" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
+        <div class="info mb-4">
+          <!--  *ngIf="form.valid && lstBeneficiarios.length<10 && porcentajeAcumulado<100" -->
+          <button type="button" [disabled]="!form.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99" class="btn orange"
+            data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
             Propietario </button>
         </div>
       </div>
@@ -100,20 +102,21 @@
             <tr>
               <th scope="col">Rut</th>
               <th scope="col">Nombre</th>
-              <th scope="col">Participación</th>
+              <th scope="col">Participación %</th>
               <th scope="col"></th>
             </tr>
           </thead>
-          <tbody *ngIf="lstBeneficiarios.length" >
+          <tbody *ngIf="lstBeneficiarios.length">
             <tr *ngFor="let beneficiario of lstBeneficiarios ">
               <th scope="row">{{beneficiario.rut}}</th>
               <td>{{beneficiario.nombre}} {{beneficiario.apellido}}</td>
-              <td>{{beneficiario.participacion}}</td>
-              <td><button class="btn btn-danger pl-2 pr-2" id="lstBeneficiarios.rut" (click)="EliminarBeneficiario(beneficiario)"><i class="fas fa-trash-alt"></i></button></td>
+              <td>{{beneficiario.participacion}}%</td>
+              <td><button class="btn btn-danger pl-2 pr-2" id="lstBeneficiarios.rut" (click)="EliminarBeneficiario(beneficiario)"><i
+                    class="fas fa-trash-alt"></i></button></td>
             </tr>
 
           </tbody>
-          <div *ngIf="lstBeneficiarios.length===0" >
+          <div *ngIf="lstBeneficiarios.length===0">
             <h6 class="text-center">Sin Beneficiarios Declarados</h6>
           </div>
         </table>
@@ -122,7 +125,7 @@
 
     <div class="info">
       <div *ngIf="!loading">
-        <input type="submit" class="btn orange" value="Enviar Declaración" />
+        <input [disabled]="lstBeneficiarios.length==0" type="submit" class="btn orange" value="Enviar Declaración" />
       </div>
       <div class="info" *ngIf="loading">
         <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
@@ -177,17 +180,20 @@
             <label for="recipient-name" class="info-label">Participación:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5,43 " formControlName="participacion"
               maxlength="4" appPhoneChar>
-            <div *ngIf="!formAgregar.get('participacion').valid && formAgregar.get('participacion').touched">
+            <div *ngIf=" formAgregar.get('participacion').hasError('InvalidPorcentaje') && !formAgregar.get('participacion').valid && formAgregar.get('participacion').touched">
               <span class="text-danger">Participación Incorrecto</span>
             </div>
-            <div *ngIf="!validacion">
+            <div *ngIf="formAgregar.get('participacion').hasError('InvalidSuperior')">
+              <span class="text-danger">Participación superior al permitido</span>
+            </div>
+            <div *ngIf="formAgregar.get('rutAgregado').hasError('Repetido')">
               <span class="text-danger">Rut ya ingresado</span>
             </div>
           </div>
           <div class="info">
-              <button type="submit" class="btn orange">Agregar</button>
+            <button type="submit" [disabled]="!formAgregar.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99"
+              class="btn orange">Agregar</button>
           </div>
-          
         </form>
       </div>
       <div class="modal-footer">
@@ -204,3 +210,16 @@
     </div>
   </div>
 </div>
+<div>
+
+  <div class="main" *ngIf="existsProcess">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="li p-0">
+          <li>Declaración de beneficiarios ingresada satisfactoriamente.</li>
+          <li>Declarante: Carlos Vidal</li>
+          <li>Fecha: {{FechaActual | date:'dd/MM/yyyy HH:mm:ss'}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>

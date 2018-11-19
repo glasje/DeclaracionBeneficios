@@ -3,6 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RutValidator } from 'src/app/validators';
 import { RutPipe } from 'ng2-rut';
 import { Router } from '@angular/router';
+import { LoginService } from 'src/app/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +17,12 @@ export class LoginComponent implements OnInit {
   error: string;
   isClient: any;
   existsProcess: boolean;
+  empresa: any;
+  mensaje: any;
  
 
-  constructor(private router: Router) { 
+  constructor(private router: Router,
+              private _loginService : LoginService) { 
     this.form = new FormGroup({
       rut: new FormControl(null, {
         validators: [Validators.required, RutValidator.checkRut]
@@ -46,36 +50,26 @@ export class LoginComponent implements OnInit {
       this.loading = true;
       
       let rut = this.form.get('rut').value;
-      rut = rut.substring(0, rut.length - 1);
-      setTimeout(() => {
-        this.existsProcess = true;
-        this.isClient = true;
-      this.loading = false;
-      this.removeValidatorFormPassword();
-      }, 2000);
-      
-     /*  this.suscripcionService.getEstado(rut).subscribe(
-        data =>{    
-          setTimeout(()=>{
-            this.statusAsegurable = data;
-            this.isClient = this.statusAsegurable.cliente;
-            this.existsProcess = this.statusAsegurable.estado;
-            this.nombre = this.statusAsegurable.nombre;
+      this._loginService.ValidarRut(rut).subscribe(
+        data =>{ 
+          console.log('data',data);
+          this.empresa=data;
+          console.log('emopresa',this.empresa.data);
+          if(this.empresa.data.existe){
+            this.existsProcess=true;
             this.loading = false;
-            this.removeValidatorFormPassword();
-  
-            //No existe proceso, muestra mensaje del servicio
-            if(!this.existsProcess){
-              this.mensaje = this.statusAsegurable.descripcion;
-            }
-          },1000);           
+            this.isClient=true;
+          }else{
+            this.mensaje= this.empresa.data.mensaje;
+            this.loading=false;
+            this.form.reset();
+          }
         },
         err =>{
           console.error(err);
-          this.handlerModalError();
           this.loading = false;
         }
-      ); */
+      ); 
     }
     else{
       Object.keys(this.form.controls).forEach(key => {
@@ -90,29 +84,36 @@ export class LoginComponent implements OnInit {
         this.loading = true;
         this.error = "";
         const rutPipe = new RutPipe();        
-        let rut = rutPipe.transform(this.form.get('rut').value).replace(/\./g,''); //this.form.get('rut').value;      
+        let rut = rutPipe.transform(this.form.get('rut').value).replace('-',''); 
+        rut = rut.substring(0,rut.length-1).replace('.','').replace('.','');   
+        console.log('retu',rut);
         let clave = (this.isClient) ? this.formPassword.get('password').value : this.formPassword.get('numeroSerie').value;
-
-        setTimeout(() => {
-          this.router.navigate(['/declaracion']);
-          this.loading = false;
-        }, 1000);  
-        /* this.ssoService.login(rut, clave, this.isClient).then(
-          data => {
-            if(data === true){
-              setTimeout(() => {
-                this.router.navigate(['/incorporacion']);
-                this.loading = false;
-              }, 1000);              
-            }else{
-              this.loading = false;
-              this.error = this.isClient ? this.MensajeErrorContrasena : this.MensajeErrorNumeroDocumento;
-            }
+        let empresa ={
+          rut:rut,
+          password :clave
+        }
+       /*  setTimeout(() => {
+          
+        }, 1000);   */
+        this._loginService.ValidarPassword(empresa).subscribe(
+          data=>{
+            console.log('data',data);
+          this.empresa=data;
+          console.log('emopresa',this.empresa.data);
+          if(this.empresa.data.existe){
+            this.router.navigate(['/declaracion']);
+            this.loading = false;
+          }else{
+            this.error=this.empresa.data.mensaje;
+            this.form.reset();
           }
-        ).catch(err => {
-          console.log(err)
-          this.loading = false;
-        });    */              
+            
+           
+          },error=>{
+            console.log('error',error);
+          }
+        )
+                   
     }else{     
         Object.keys(this.formPassword.controls).forEach(key => {
           this.formPassword.get(key).markAsTouched();

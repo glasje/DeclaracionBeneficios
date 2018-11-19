@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { RutValidator} from 'src/app/validators';
+import { RutValidator, ParcialValidator} from 'src/app/validators';
 import { BeneficiarioService } from 'src/app/services/beneficiario.service';
 import { Beneficiario } from 'src/app/models/beneficiario';
 import swal from 'sweetalert2'
@@ -11,7 +11,7 @@ import swal from 'sweetalert2'
 })
 export class DeclaracionbeneficiosComponent implements OnInit {
 
-  public loading: boolean = false;
+  public loading: boolean;
   public form: FormGroup;
   formPassword: FormGroup;
   lstBeneficiarios: Beneficiario[];
@@ -19,6 +19,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   beneficiario: Beneficiario;
   validacion: boolean;
   porcentajeAcumulado : number;
+  existsProcess: boolean;
+  FechaActual: Date;
   constructor(private _beneficiarioService: BeneficiarioService) {
     //Form declaracion de beneficios
     this.form = new FormGroup({
@@ -50,9 +52,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         updateOn: 'blur'
       }),
       participacion: new FormControl(null, {
-        validators: [Validators.required,],
-        updateOn: 'blur'
-      }),
+        validators: [Validators.required,ParcialValidator.Correcto]
+      }), 
       nombreAgregar: new FormControl(null, {
         validators: [Validators.required],
         updateOn: 'blur'
@@ -74,14 +75,39 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   public checkIsValid(field: string) {
     return (this.form.get(field).invalid && (this.form.get(field).dirty || this.form.get(field).touched));
   }
-
+  public Evaluar(field: string){
+    
+      
+  }
   public checkIsValidA(field: string) {
+    /* if(field==='participacion'){
+      if(this.formAgregar.get(field).value!= null){
+        let input =this.formAgregar.get(field).value.replace(",",".");
+        console.log('input',input);
+        console.log('proce',this.porcentajeAcumulado);
+        let suma = this.porcentajeAcumulado+parseFloat(input);
+         if(suma<100){
+          return this.formAgregar.controls[field].setErrors(null);
+         }else{
+          return this.formAgregar.controls[field].setErrors({'InvalidPorcentaje':true});
+          
+         }
+      }else{
+        return this.formAgregar.controls[field].setErrors(null);
+      }
+    } */
     return (this.formAgregar.get(field).invalid && (this.formAgregar.get(field).dirty || this.formAgregar.get(field).touched));
   }
 
   formSubmit() {
+    console.log('form')
     if (this.form.valid) {
-      console.log('aqui')
+      this.loading=true; 
+      setTimeout(() => {
+        this.FechaActual= new Date();
+        this.existsProcess =true
+      }, 2000);
+      
     } else {
       Object.keys(this.form.controls).forEach(key => {
         this.form.get(key).markAsTouched();
@@ -96,14 +122,22 @@ export class DeclaracionbeneficiosComponent implements OnInit {
 
   AgregarParticipante() {
     let lst = this._beneficiarioService.lstBeneficiarios;
-    this.validacion = true;
-    /* lst.forEach(element => {
+    let porcentaje =0;
+    let suma =0;
+
+    
+    porcentaje = this.formAgregar.get('participacion').value;
+    suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString().replace(",","."));
+    lst.forEach(element => {
       if (element.rut === this.formAgregar.get('rutAgregado').value) {
-        console.log('reee');
         this.validacion = this.formAgregar.invalid;
+        return this.formAgregar.controls['rutAgregado'].setErrors({'Repetido':true});
       }
-    }) */
-    if (this.validacion) {
+    })  
+    if(suma>100){
+      return this.formAgregar.controls['participacion'].setErrors({'InvalidSuperior':true});
+    }
+   
       if (this.formAgregar.valid) {
         this.beneficiario = new Beneficiario();
 
@@ -121,8 +155,6 @@ export class DeclaracionbeneficiosComponent implements OnInit {
           this.formAgregar.get(key).markAsTouched();
         });
       }
-    }
-
   }
 
   CalcularPorcentaje(){
@@ -136,10 +168,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         suma= suma+parseFloat(valor);
       });
     }
-    console.log('for',suma)
-
     this.porcentajeAcumulado=suma;
-    console.log(this.porcentajeAcumulado)
+    this._beneficiarioService.porcentajeAcumulado=this.porcentajeAcumulado;
     return this.porcentajeAcumulado;
   }
 
