@@ -45,15 +45,20 @@ export class RutValidator {
       return failed ? { 'mainRut': { value: control.value } } : null;
     };
   }
-  
   static Natural(control: FormControl): any {  
-    let valor= control.value;
-    console.log('dfd',valor)
-    if (control.value>50000000) {
+    console.log('rt',control.value)
+    if (rutHelper.rutValidate(control.value)) {
+      let rut = control.value;
+      rut = rut.toString().substring(0,rut.length-1);
+      let rutDv = parseInt(rut);
+      if(rutDv>50000000){
+        console.log('rt',rutDv)
+        return {'InvalidNatural':true}
+      }
       return null;
     } else {
       return {
-        'InvalidNatural': true
+        'invalidRut': true
       };
     }
   }

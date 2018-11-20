@@ -3,7 +3,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RutValidator, ParcialValidator} from 'src/app/validators';
 import { BeneficiarioService } from 'src/app/services/beneficiario.service';
 import { Beneficiario } from 'src/app/models/beneficiario';
-import swal from 'sweetalert2'
+import { ModalService } from 'src/app/services/modal.service';
+import { ModalComponent } from '../modal/modal.component';
+import { element } from '@angular/core/src/render3/instructions';
+
 @Component({
   selector: 'app-declaracionbeneficios',
   templateUrl: './declaracionbeneficios.component.html',
@@ -21,11 +24,14 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   porcentajeAcumulado : number;
   existsProcess: boolean;
   FechaActual: Date;
-  constructor(private _beneficiarioService: BeneficiarioService) {
+  editar : boolean;
+  constructor(private _beneficiarioService: BeneficiarioService,
+    private modalService: ModalService) {
     //Form declaracion de beneficios
     this.form = new FormGroup({
       rut: new FormControl(null, {
-        validators: [Validators.required, RutValidator.checkRut, RutValidator.Natural]
+        validators: [Validators.required, RutValidator.checkRut,RutValidator.Natural],
+        updateOn: 'blur'
       }),
       nombre: new FormControl(null, {
         validators: [Validators.required],
@@ -48,7 +54,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     //Form agregar beneficiario
     this.formAgregar = new FormGroup({
       rutAgregado: new FormControl(null, {
-        validators: [Validators.required, RutValidator.checkRut, RutValidator.Natural],
+        validators: [Validators.required, RutValidator.checkRut],
         updateOn: 'blur'
       }),
       participacion: new FormControl(null, {
@@ -67,6 +73,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     this.lstBeneficiarios = [];
     this.validacion = true;
     this.porcentajeAcumulado=0;
+    this.editar=false;
   }
 
   ngOnInit() {
@@ -139,15 +146,26 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     }
    
       if (this.formAgregar.valid) {
-        this.beneficiario = new Beneficiario();
+        if(!this.editar){
+          this.beneficiario = new Beneficiario();
 
-        this.beneficiario.rut = this.formAgregar.get('rutAgregado').value;
-        this.beneficiario.nombre = this.formAgregar.get('nombreAgregar').value;
-        this.beneficiario.apellido = this.formAgregar.get('apellidoAgregar').value;
-        this.beneficiario.participacion = this.formAgregar.get('participacion').value;
-        this._beneficiarioService.AgregarBeneficiario(this.beneficiario);
-        this.ObtenerBeneficiarios();
-        /* this.formAgregar.reset(); */
+          this.beneficiario.rut = this.formAgregar.get('rutAgregado').value;
+          this.beneficiario.nombre = this.formAgregar.get('nombreAgregar').value;
+          this.beneficiario.apellido = this.formAgregar.get('apellidoAgregar').value;
+          this.beneficiario.participacion = this.formAgregar.get('participacion').value;
+          this._beneficiarioService.AgregarBeneficiario(this.beneficiario);
+          this.ObtenerBeneficiarios();
+        }else{
+          let rut =this.formAgregar.get('rutAgregado').value
+          this.lstBeneficiarios.forEach(element=>{
+            if(rut ===element.rut){
+              element.nombre=this.formAgregar.get('nombreAgregar').value;
+              element.apellido = this.formAgregar.get('apellidoAgregar').value;
+              element.participacion = this.formAgregar.get('participacion').value;
+            }
+          })
+        }
+        this.formAgregar.reset(); 
         
 
       } else {
@@ -156,7 +174,9 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         });
       }
   }
-
+  Cambiar(){
+    this.editar=false;
+  }
   CalcularPorcentaje(){
     let suma: number;
     suma=0;
@@ -172,30 +192,34 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     this._beneficiarioService.porcentajeAcumulado=this.porcentajeAcumulado;
     return this.porcentajeAcumulado;
   }
-
+  EditarBeneficiario(beneficiario){
+    this.editar=true;
+    this.formAgregar.controls['rutAgregado'].setValue(beneficiario.rut);
+    this.formAgregar.controls['nombreAgregar'].setValue(beneficiario.nombre);
+    this.formAgregar.controls['apellidoAgregar'].setValue(beneficiario.apellido);
+    this.formAgregar.controls['participacion'].setValue(beneficiario.participacion);
+  }
   EliminarBeneficiario(beneficiario) {
-    swal({
-      title: 'Confirmar eliminación',
-      text: "¿Desea eliminar al beneficiario?",
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.value) {
-        swal(
-          'Beneficiario eliminado',
-          'se ha eliminado correctamente',
-          'success'
-        )
+    let id = document.getElementById('modal');
+    id.style.display= 'block'
+    this.modalService.init(ModalComponent,
+      {
+        'message': 'Está seguro que desea eliminar a ' + beneficiario.nombre,
+        'okMessage': 'Si',
+        'cancelMessage': 'No'
+      }, {});
 
+    this.modalService.okEvent.subscribe(data => {
+      if (data === true) {
         this._beneficiarioService.EliminarBeneficiario(beneficiario);
         this.ObtenerBeneficiarios();
-
       }
-    })
+    });
+    this.modalService.cancelEvent.subscribe(data => {
+      if (data === true) {
+        return;
+      }
+    });
 
   }
 }

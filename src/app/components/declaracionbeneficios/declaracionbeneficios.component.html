@@ -91,39 +91,71 @@
           derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
         <div class="info mb-4">
           <!--  *ngIf="form.valid && lstBeneficiarios.length<10 && porcentajeAcumulado<100" -->
-          <button type="button" [disabled]="!form.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99" class="btn orange"
-            data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
+          <button (click)="Cambiar()" type="button" [disabled]="!form.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99" class="btn orange"
+            data-toggle="modal" data-target="#exampleModal"  data-whatever="@mdo" >Agregar
             Propietario </button>
         </div>
       </div>
-      <div class="table-responsive">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Rut</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Participación %</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody *ngIf="lstBeneficiarios.length">
-            <tr *ngFor="let beneficiario of lstBeneficiarios ">
-              <th scope="row">{{beneficiario.rut}}</th>
-              <td>{{beneficiario.nombre}} {{beneficiario.apellido}}</td>
-              <td>{{beneficiario.participacion}}%</td>
-              <td><button class="btn btn-danger pl-2 pr-2" id="lstBeneficiarios.rut" (click)="EliminarBeneficiario(beneficiario)"><i
-                    class="fas fa-trash-alt"></i></button></td>
-            </tr>
+      <section class="vs_client w-100" id="vs_cnt">
+        <div class="cnt_data" id="information">
+          <ul class="data data--media">
+            <li class="point">Rut</li>
+            <li class="point">Nombre</li>
+            <li class="point">Participación</li>
+            <li class="point"></li>
+          </ul>
+          <ul class="data data--media" *ngFor="let beneficiario of lstBeneficiarios ">
+            <li class="point">
+              <div class="txt_medium_gray">{{beneficiario.rut}}</div>
+            </li>
+            <li class="point">
+              <div class="txt_medium_gray">
+                {{beneficiario.nombre}} {{beneficiario.apellido}}
+              </div>
+            </li>
+            <li class="point">
+              <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
+            </li>
+            <li class="point modify">
+              <i class="fas fa-pencil-alt pr-2" (click)="EditarBeneficiario(beneficiario)" data-toggle="modal"
+                data-target="#exampleModal" data-whatever="@mdo"></i>
+              <i class="fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
+            </li>
+          </ul>
+        </div>
+        <div class="mobile_data">
+          <ul class="data" *ngFor="let beneficiario of lstBeneficiarios ">
+            <li class="point">
+              <div class="txt_litle">Rut</div>
+              <div class="txt_medium_gray">{{beneficiario.rut}}</div>
+            </li>
+            <li class="point">
+              <div class="txt_litle">Nombre</div>
+              <div class="txt_medium_gray">
+                {{beneficiario.nombre}} {{beneficiario.apellido}}
+              </div>
+            </li>
+            <li class="point">
+              <div class="txt_litle">Participación</div>
+              <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
+            </li>
 
-          </tbody>
-          <div *ngIf="lstBeneficiarios.length===0">
-            <h6 class="text-center">Sin Beneficiarios Declarados</h6>
-          </div>
-        </table>
-      </div>
+            <li class="point"></li>
+            <li class="point modify">
+              <i class="modify-edit fas fa-pencil-alt pr-2" (click)="EditarBeneficiario(beneficiario)" data-toggle="modal"
+                data-target="#exampleModal" data-whatever="@mdo"></i>
+              <i class="modify-edit fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
+
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="lstBeneficiarios.length===0">
+          Sin Beneficiarios Declarados
+        </div>
+      </section>
     </div>
 
-    <div class="info">
+    <div class="info mt-2">
       <div *ngIf="!loading">
         <input [disabled]="lstBeneficiarios.length==0" type="submit" class="btn orange" value="Enviar Declaración" />
       </div>
@@ -144,7 +176,7 @@
       <div class="modal-header bg-security text-white">
         <h5 class="modal-title" id="exampleModalLabel ">Agregar Propietario</h5>
         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+          <span aria-hidden="true" (click)="Cambiar()">&times;</span>
         </button>
       </div>
       <div class="modal-body">
@@ -159,7 +191,7 @@
             <div *ngIf="formAgregar.get('rutAgregado').hasError('InvalidNatural') && formAgregar.get('rutAgregado').touched">
               <span class="text-danger">Se debe ingresar un rut de persona natural.</span>
             </div>
-          </div>
+          </div>{{editar}}
           <div class="form-group">
             <label for="recipient-name" class="info-label">Nombre:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: juan " formControlName="nombreAgregar"
@@ -191,8 +223,10 @@
             </div>
           </div>
           <div class="info">
-            <button type="submit" [disabled]="!formAgregar.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99"
+            <button type="submit" *ngIf="!editar" [disabled]="!formAgregar.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99"
               class="btn orange">Agregar</button>
+            <button type="submit" *ngIf="editar" [disabled]="!formAgregar.valid || lstBeneficiarios.length>9 || porcentajeAcumulado>99"
+              class="btn orange">Editar</button>
           </div>
         </form>
       </div>

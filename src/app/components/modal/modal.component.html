@@ -1,0 +1,8 @@
+<span class="icon icon-close" (click)="closeModal()"></span>
+<label class="vs_content-subtitle-modal" >{{message}}
+</label>
+
+<div class="m_form">
+  <button type="button" class="m_form-btn m_form-btn--first btn orange" (click)="okButton()" *ngIf="okMessage.length > 0">{{ okMessage }}</button>
+  <button type="button" class="m_form-btn btn blue" (click)="cancelButton()" *ngIf="cancelMessage.length > 0">{{ cancelMessage }}</button>
+</div>

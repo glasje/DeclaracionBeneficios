@@ -30,6 +30,9 @@ import { LoadersCssModule } from 'angular2-loaders-css';
 import { Ng2Rut } from 'ng2-rut';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginService } from './services/login.service';
+import { ModalComponent } from './components/modal/modal.component';
+import { DomService } from './services/dom.service';
+import { ModalService } from './services/modal.service';
 
 registerLocaleData(localeCL);
 
@@ -42,7 +45,7 @@ registerLocaleData(localeCL);
     PhoneCharDirective,
     OnlyNumbersDirective,
     DisableControlDirective,
-
+    ModalComponent
   ],
   imports: [
     BrowserModule,
@@ -54,15 +57,21 @@ registerLocaleData(localeCL);
     LoadersCssModule,
     RecaptchaModule.forRoot(),
     RecaptchaFormsModule,
+    
   ],
   providers: [
     LoginService,
+    DomService,
+    ModalService,
     { provide: LOCALE_ID, useValue: 'es-CL' },
     {provide: RECAPTCHA_SETTINGS,
       useValue: {
         siteKey: '6LcOl3sUAAAAAOKFGKEGOxMWysfS1LYJ0oYW-3bs',
       } as RecaptchaSettings,
     }
+  ],
+  entryComponents: [
+    ModalComponent
   ],
   bootstrap: [AppComponent]
 })
