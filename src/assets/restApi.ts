@@ -1,9 +1,20 @@
 export const RestApi = {
   Login: {
-    urlLogin: 'https://coreapideclarcbenef20181118120007.azurewebsites.net/api/Empresa/',
-    endPointValidarRut:'ValidarRut/',
-    endPointValidarPassword :'ValidarClave',
-    headersJson: {
+    endPoint: 'https://coreapideclarcbenef20181118120007.azurewebsites.net/',
+    methods:{
+      ValidarRut:'api/Empresa/ValidarRut/',
+      ValidarPassword :'api/Empresa/ValidarClave',
+    }
+  },
+  Declarante :{
+    endPoint :'https://coreapideclarcbenef20181118120007.azurewebsites.net/',
+    methods:{
+      obtenerPropietario: 'api/Declaracion/ObtenerPropietarios',
+      GuardarPropietario :'api/Declaracion/GuardarPropietario'
+    }
+  },
+  Headers:{
+    headerJson: {
       'Content-Type': 'application/json',
       'x-ibm-client-id': 'bffe8683-380c-4bbf-8351-75cf98ef1a35'
     },
@@ -11,4 +22,5 @@ export const RestApi = {
       'Content-Type': 'application/x-www-form-urlencoded'
     }
   }
+  
 };

@@ -2,3 +2,6 @@
     color: black;
     background-color: transparent;
 }
+.black{
+    color: black !important;
+}

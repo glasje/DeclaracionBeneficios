@@ -930,6 +930,7 @@ body.body--hidden {
   text-transform: initial;
   -webkit-transition: .2s linear all;
   transition: .2s linear all;
+  border-bottom: 1px solid #ada9a9;
 }
 
 .main .info-input-name {

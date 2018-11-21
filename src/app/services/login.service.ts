@@ -12,13 +12,13 @@ export class LoginService {
   }
 
   ValidarRut(rutEmpresa):Observable<any>{
-    const endPoint= RestApi.Login.urlLogin+RestApi.Login.endPointValidarRut;
+    const endPoint= RestApi.Login.endPoint+RestApi.Login.methods.ValidarRut;
     return this.httCliente.get(endPoint+rutEmpresa);
   }
 
   ValidarPassword(empresa):Observable<any>{
-    const endPoint= RestApi.Login.urlLogin+RestApi.Login.endPointValidarPassword;
-    let headers = new HttpHeaders(RestApi.Login.headersJson);
+    const endPoint= RestApi.Login.endPoint+RestApi.Login.methods.ValidarPassword;
+    let headers = new HttpHeaders(RestApi.Headers.headerJson);
 
     return this.httCliente.post(endPoint,empresa, { headers: headers });
   }

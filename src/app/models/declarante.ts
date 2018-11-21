@@ -3,23 +3,28 @@
  */
 export class Declarante {
     /**
-     * Rut beneficiario
+     * Rut declarante
      */
     rut: string;
   
     /**
-     * Nombre beneficiario
+     * Nombre declarante
      */
     nombre: string;
   
     /**
-     * Apellido beneficiario
+     * Apellido declarante
      */
     apellido: string;
 
     /**
-     * Participación
+     * Relación empresa 
      */
-    participacion : number;
+    relacionEmpresa : string;
+
+    /**
+     * correo electrónico
+     */
+    correo : string;
   }
   
