@@ -98,8 +98,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
 
   ngOnInit() {
     this.ObtenerPropietario();
-    this.empresa= this._beneficiarioService.empresa;
-    this.empresa.rut =  this.empresa.rut+this.empresa.dv; 
+    this.empresa = this._beneficiarioService.empresa;
+    this.empresa.rut = this.empresa.rut + this.empresa.dv;
   }
   public checkIsValid(field: string) {
     return (this.form.get(field).invalid && (this.form.get(field).dirty || this.form.get(field).touched));
@@ -110,7 +110,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   }
 
   formSubmit() {
-    console.log('form')
+
     if (this.form.valid) {
       this.loading = true;
       setTimeout(() => {
@@ -124,17 +124,21 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       });
     }
   }
-  ObtenerPropietario(){
+  ObtenerPropietario() {
     let dataAux;
     this._beneficiarioService.ObtenerPropietario(this.empresa).subscribe(
       (data) => {
-        console.log('data', data);
-        dataAux=data;
-       this.lstPropietario=dataAux.data;
-       console.log('lst',this.lstPropietario);
+        dataAux = data;
+        this.lstPropietario = dataAux.data;
+
+        this.lstPropietario.forEach(element => {
+          element.rutCompleto = element.rutPropietario + element.dvPropietario;
+        });
+    
+        this.CalcularPorcentaje();
       },
       (error) => {
-        this.lstPropietario=[];
+        this.lstPropietario = [];
         console.log('error', error);
       }
     )
@@ -144,11 +148,11 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     let lst = this._beneficiarioService.lstBeneficiarios;
     let porcentaje = 0;
     let suma = 0;
-
+    this.CalcularPorcentaje();
     porcentaje = this.formAgregar.get('participacion').value;
-    suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString().replace(",", "."));
+    suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString());
     lst.forEach(element => {
-      if (element.rut === this.formAgregar.get('rutAgregado').value) {
+      if (element.rutPropietario === this.formAgregar.get('rutAgregado').value) {
         this.validacion = this.formAgregar.invalid;
         return this.formAgregar.controls['rutAgregado'].setErrors({ 'Repetido': true });
       }
@@ -160,21 +164,20 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     if (this.formAgregar.valid) {
 
       this.propietario = new Propietario();
-      const rutPipe = new RutPipe();    
-      let rut = rutPipe.transform(this.formAgregar.get('rutAgregado').value).replace('-',''); 
-      let dv =rut.substring(rut.length-2,rut.length-1).replace('.','').replace('.',''); 
-      rut = rut.substring(0,rut.length-1).replace('.','').replace('.','');   
-      console.log('retu',rut,'dv',dv);
-
-      this.propietario.rut = rut;
-      this.propietario.dv=dv
-      this.propietario.nombre = this.formAgregar.get('nombreAgregar').value;
-      this.propietario.apellido = this.formAgregar.get('apellidoAgregar').value;
+      const rutPipe = new RutPipe();
+      let rut = rutPipe.transform(this.formAgregar.get('rutAgregado').value).replace('-', '');
+      let dv = rut.substring(rut.length - 2, rut.length - 1).replace('.', '').replace('.', '');
+      rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
+    
+      this.propietario.id = this.empresa.idEmpresa;
+      this.propietario.rutPropietario = rut;
+      this.propietario.dvPropietario = dv
+      this.propietario.nombrePropietario = this.formAgregar.get('nombreAgregar').value;
+      this.propietario.apellidoPropietario = this.formAgregar.get('apellidoAgregar').value;
       this.propietario.participacion = this.formAgregar.get('participacion').value;
-      console.log('parti',this.propietario);
+     
       this._beneficiarioService.GuardarPropietario(this.propietario).subscribe(
         (data) => {
-          console.log('data', data);
           this.ObtenerPropietario();
           this.formAgregar.reset();
         },
@@ -196,11 +199,9 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   CalcularPorcentaje() {
     let suma: number;
     suma = 0;
-    console.log(this.lstPropietario);
     if (this.lstPropietario.length > 0) {
       this.lstPropietario.forEach(element => {
-        console.log('for', element.participacion);
-        let valor = element.participacion.toString().replace(",", ".")
+        let valor = element.participacion.toString();
         suma = suma + parseFloat(valor);
       });
     }
@@ -209,28 +210,48 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     return this.porcentajeAcumulado;
   }
   EditarPropietario(beneficiario) {
+    let propietarioEdit = new Propietario();
     this.editar = true;
-    console.log('bene',beneficiario);
-    let rut = beneficiario.rutPropietario+beneficiario.dvPropietario;
-console.log('tur',rut)
-    this.formEditar.controls['rutEditar'].setValue('jyghgjjh');
-    this.formEditar.controls['nombreEditar'].setValue('gdfgffdf');
-    this.formEditar.controls['apellidoEditar'].setValue(beneficiario.apellidoPropietario);
-    this.formEditar.controls['participacionEditar'].setValue(beneficiario.participacion);
+    let rut = beneficiario.rutPropietario + beneficiario.dvPropietario;
+    propietarioEdit.rutCompleto = rut;
+    propietarioEdit.nombrePropietario = beneficiario.nombrePropietario;
+    propietarioEdit.apellidoPropietario = beneficiario.apellidoPropietario;
+    propietarioEdit.participacion = beneficiario.participacion;
+
+    this.formEditar.setValue({
+      rutEditar: propietarioEdit.rutCompleto,
+      participacionEditar: propietarioEdit.participacion,
+      nombreEditar: propietarioEdit.nombrePropietario,
+      apellidoEditar: propietarioEdit.apellidoPropietario
+    })
   }
 
   ModificarBeneficiario() {
-    let rut = this.formEditar.get('rutEditar').value
+    let porcentaje = 0;
+    let suma = 0;
+    this.CalcularPorcentaje();
+    porcentaje = this.formEditar.get('participacionEditar').value;
+    suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString());
+    if (suma > 100) {
+      return this.formEditar.controls['participacionEditar'].setErrors({ 'InvalidSuperior': true });
+    }
+    if (this.formEditar.valid) {
+      let rut = this.formEditar.get('rutEditar').value
 
-    this.lstPropietario.forEach(element => {
-      if (rut === element.rut) {
-        element.nombre = this.formEditar.get('nombreEditar').value;
-        element.apellido = this.formEditar.get('apellidoEditar').value;
-        element.participacion = this.formEditar.get('participacionEditar').value;
-        document.getElementById('btnEditar').click();
+      this.lstPropietario.forEach(element => {
+        if (rut === element.rutCompleto) {
+          element.nombrePropietario = this.formEditar.get('nombreEditar').value;
+          element.apellidoPropietario = this.formEditar.get('apellidoEditar').value;
+          element.participacion = this.formEditar.get('participacionEditar').value;
+          document.getElementById('btnEditar').click();
 
-      }
-    })
+        }
+      })
+    } else {
+      Object.keys(this.formEditar.controls).forEach(key => {
+        this.formEditar.get(key).markAsTouched();
+      });
+    }
   }
 
   EliminarBeneficiario(beneficiario) {

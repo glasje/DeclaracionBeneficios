@@ -69,14 +69,13 @@ export class LoginComponent implements OnInit {
 
       this._loginService.ValidarRut(rut).subscribe(
         data => {
-          console.log('data', data);
           this.consultaEmpresa = data;
-          console.log('emopresa', this.consultaEmpresa.data);
           if (this.consultaEmpresa.data.existe) {
             this.existsProcess = true;
             this.loading = false;
             this.isClient = true;
             this.razonSocial=this.consultaEmpresa.data.razonSocial;
+            this.empresa.idEmpresa=this.consultaEmpresa.data.id;
           } else {
             this.mensaje = this.consultaEmpresa.data.mensaje;
             this.loading = false;
@@ -104,7 +103,7 @@ export class LoginComponent implements OnInit {
       const rutPipe = new RutPipe();
       let rut = rutPipe.transform(this.form.get('rut').value).replace('-', '');
       rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
-      console.log('retu', rut);
+    
       let clave = this.formPassword.get('password').value;
       let consultaEmpresa = {
         rut: rut,
@@ -123,9 +122,9 @@ export class LoginComponent implements OnInit {
       }, 1000);   */
       this._loginService.ValidarPassword(consultaEmpresa).subscribe(
         data => {
-          console.log('data', data);
+      
           this.consultaEmpresa = data;
-          console.log('emopresa', this.consultaEmpresa.data);
+        
           if (this.consultaEmpresa.data.empresa.autorizado && 
               this.consultaEmpresa.data.empresa.existe && 
               !this.consultaEmpresa.data.enviado) {

@@ -2,28 +2,29 @@
  * Model Propietario
  */
 export class Propietario {
+  id: number
   /**
    * Rut Propietario
    */
-  rut: string;
-/**
-   * Rut Propietario
-   */
+  rutPropietario: string;
+  /**
+     * Rut Propietario
+     */
   rutCompleto: string;
 
   /**
      * Rut Propietario
      */
-  dv: string;
+  dvPropietario: string;
   /**
    * Nombre Propietario
    */
-  nombre: string;
+  nombrePropietario: string;
 
   /**
    * Apellido Propietario
    */
-  apellido: string;
+  apellidoPropietario: string;
 
   /**
    * Participación

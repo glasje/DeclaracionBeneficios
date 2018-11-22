@@ -106,7 +106,7 @@
           </ul>
           <ul class="data data--media" *ngFor="let beneficiario of lstPropietario ">
             <li class="point">
-              <div class="txt_medium_gray">{{beneficiario.rutPropietario}}{{beneficiario.dvPropietario}}</div>
+              <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
             </li>
             <li class="point">
               <div class="txt_medium_gray">
@@ -127,7 +127,7 @@
           <ul class="data" *ngFor="let beneficiario of lstPropietario ">
             <li class="point">
               <div class="txt_litle">Rut</div>
-              <div class="txt_medium_gray">{{beneficiario.rutPropietario}}-{{beneficiario.dvPropietario}}</div>
+              <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
             </li>
             <li class="point">
               <div class="txt_litle">Nombre</div>
@@ -211,7 +211,7 @@
           <div class="form-group">
             <label for="recipient-name" class="info-label">Participación:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5,43 " formControlName="participacion"
-              maxlength="4" appPhoneChar>
+              maxlength="5" appPhoneChar>
             <div *ngIf=" formAgregar.get('participacion').hasError('InvalidPorcentaje') && !formAgregar.get('participacion').valid && formAgregar.get('participacion').touched">
               <span class="text-danger">Participación Incorrecto</span>
             </div>
@@ -253,7 +253,7 @@
           <div class="form-group">
             <label for="recipient-name" class="info-label">Participación:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5,43 " formControlName="participacionEditar"
-              maxlength="4" appPhoneChar>
+              maxlength="5" appPhoneChar>
             <div *ngIf=" formEditar.get('participacionEditar').hasError('InvalidPorcentaje') && !formEditar.get('participacionEditar').valid && formAgregar.get('participacion').touched">
               <span class="text-danger">Participación Incorrecto</span>
             </div>

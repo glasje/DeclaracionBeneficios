@@ -46,13 +46,11 @@ export class RutValidator {
     };
   }
   static Natural(control: FormControl): any {  
-    console.log('rt',control.value)
     if (rutHelper.rutValidate(control.value)) {
       let rut = control.value;
       rut = rut.toString().substring(0,rut.length-1);
       let rutDv = parseInt(rut);
       if(rutDv>50000000){
-        console.log('rt',rutDv)
         return {'InvalidNatural':true}
       }
       return null;

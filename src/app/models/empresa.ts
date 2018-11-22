@@ -6,6 +6,7 @@ export class Empresa {
      * id declarante
      */
     id : number;
+    idEmpresa : number;
     /**
      * Rut Empresa
      */

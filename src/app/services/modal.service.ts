@@ -40,7 +40,6 @@ export class ModalService {
    * @param outputs Outpus que envía el componente
    */
   init(component: any, inputs: object, outputs: object) {
-    console.log('component',component,'inputs',inputs,'out',outputs);
     const componentConfig = {
       inputs: inputs,
       outputs: outputs

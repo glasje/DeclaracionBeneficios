@@ -17,8 +17,7 @@ export class ParcialValidator {
   static Correcto(control: FormControl): any {  
 
     if(control.value!= null){
-      let input =control.value.replace(",",".")
-    if (input<101) {
+    if (control.value<101) {
       return null;
     } else {
       return {

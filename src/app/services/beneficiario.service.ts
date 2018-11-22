@@ -48,7 +48,7 @@ export class BeneficiarioService {
   EliminarBeneficiario(beneficiario): Propietario[] {
     let rut = beneficiario.rut;
 
-    this.lstBeneficiarios = this.lstBeneficiarios.filter(beneficiario => beneficiario.rut !== rut);
+    this.lstBeneficiarios = this.lstBeneficiarios.filter(beneficiario => beneficiario.rutPropietario !== rut);
     return this.lstBeneficiarios;
   }
 }
