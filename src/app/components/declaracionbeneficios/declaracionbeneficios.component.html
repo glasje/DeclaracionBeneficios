@@ -22,10 +22,76 @@
 
     </div>
   </div>
-
-
+  
   <form *ngIf="!existsProcess" class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
-    <p class=" ">Identificación del Declarante:</p>
+      <div class="row">
+          <div class="col-md-12">
+            <div class="info mb-4">
+              <!--  *ngIf="form.valid && lstPropietario.length<10 && porcentajeAcumulado<100" -->
+              <button (click)="Cambiar()" type="button" [disabled]="!form.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
+                class="btn orange" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
+                Propietario </button>
+            </div>
+            <section class="vs_client w-100" id="vs_cnt">
+              <div class="cnt_data" id="information">
+                <ul class="data data--media">
+                  <li class="point">Rut</li>
+                  <li class="point">Nombre</li>
+                  <li class="point">Participación</li>
+                  <li class="point"></li>
+                </ul>
+                <ul class="data data--media" *ngFor="let beneficiario of lstPropietario ">
+                  <li class="point">
+                    <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
+                  </li>
+                  <li class="point">
+                    <div class="txt_medium_gray">
+                      {{beneficiario.nombrePropietario}} {{beneficiario.apellidoPropietario}}
+                    </div>
+                  </li>
+                  <li class="point">
+                    <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
+                  </li>
+                  <li class="point modify">
+                    <i class="fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
+                      data-target="#exampleModal" data-whatever="@mdo"></i>
+                    <i class="fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
+                  </li>
+                </ul>
+              </div>
+              <div class="mobile_data">
+                <ul class="data" *ngFor="let beneficiario of lstPropietario ">
+                  <li class="point">
+                    <div class="txt_litle">Rut</div>
+                    <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
+                  </li>
+                  <li class="point">
+                    <div class="txt_litle">Nombre</div>
+                    <div class="txt_medium_gray">
+                      {{beneficiario.nombrePropietario}} {{beneficiario.apellidoPropietario}}
+                    </div>
+                  </li>
+                  <li class="point">
+                    <div class="txt_litle">Participación</div>
+                    <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
+                  </li>
+      
+                  <li class="point"></li>
+                  <li class="point modify">
+                    <i class="modify-edit fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
+                      data-target="#exampleModal" data-whatever="@mdo"></i>
+                    <i class="modify-edit fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
+      
+                  </li>
+                </ul>
+              </div>
+              <div *ngIf="lstPropietario.length===0">
+                Sin Beneficiarios Declarados
+              </div>
+            </section>
+          </div>
+        </div>
+    <p class="mt-4">Identificación del Declarante:</p>
     <div class="row">
       <div class="col-md-6" [class.info--error]="checkIsValid('rut')">
         <label class="info-label">RUT Declarante</label>
@@ -77,87 +143,28 @@
             </div>
           </div>
         </div>
+        
+          <p class="  bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
 
+          <p class="  text-justify"> Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
+            o extranjera,
+            que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de
+            los
+            derechos a voto de su empresa.
+            Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
+            sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
+            derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
+            <p class="text-justify bold ">Propietario con participación mayor o igual a 10%</p>
+            <p class="  ">Identifique las personas naturales que tienen una participación en la Empresa
+                igual o mayor al 10%. </p>
       </div>
-      <div class="col-md-12">
-        <p class="  bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
-
-        <p class="  text-justify"> Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
-          o extranjera,
-          que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de los
-          derechos a voto de su empresa.
-          Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
-          sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
-          derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
-        <div class="info mb-4">
-          <!--  *ngIf="form.valid && lstPropietario.length<10 && porcentajeAcumulado<100" -->
-          <button (click)="Cambiar()" type="button" [disabled]="!form.valid || lstPropietario.length>9 || porcentajeAcumulado>99" class="btn orange"
-            data-toggle="modal" data-target="#exampleModal"  data-whatever="@mdo" >Agregar
-            Propietario </button>
-        </div>
-      </div>
-      <section class="vs_client w-100" id="vs_cnt">
-        <div class="cnt_data" id="information">
-          <ul class="data data--media">
-            <li class="point">Rut</li>
-            <li class="point">Nombre</li>
-            <li class="point">Participación</li>
-            <li class="point"></li>
-          </ul>
-          <ul class="data data--media" *ngFor="let beneficiario of lstPropietario ">
-            <li class="point">
-              <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
-            </li>
-            <li class="point">
-              <div class="txt_medium_gray">
-                {{beneficiario.nombrePropietario}} {{beneficiario.apellidoPropietario}}
-              </div>
-            </li>
-            <li class="point">
-               <div class="txt_medium_gray">{{beneficiario.participacion}}%</div> 
-            </li>
-            <li class="point modify">
-              <i class="fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
-                data-target="#exampleModal" data-whatever="@mdo"></i>
-              <i class="fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
-            </li>
-          </ul>
-        </div>
-        <div class="mobile_data">
-          <ul class="data" *ngFor="let beneficiario of lstPropietario ">
-            <li class="point">
-              <div class="txt_litle">Rut</div>
-              <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
-            </li>
-            <li class="point">
-              <div class="txt_litle">Nombre</div>
-              <div class="txt_medium_gray">
-                {{beneficiario.nombrePropietario}} {{beneficiario.apellidoPropietario}}
-              </div>
-            </li>
-            <li class="point">
-              <div class="txt_litle">Participación</div>
-               <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
-            </li>
-
-            <li class="point"></li>
-            <li class="point modify">
-              <i class="modify-edit fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
-                data-target="#exampleModal" data-whatever="@mdo"></i>
-              <i class="modify-edit fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
-
-            </li>
-          </ul>
-        </div>
-        <div *ngIf="lstPropietario.length===0">
-          Sin Beneficiarios Declarados
-        </div>
-      </section>
     </div>
 
     <div class="info mt-2">
       <div *ngIf="!loading">
-        <input [disabled]="lstPropietario.length==0" type="submit" class="btn orange" value="Enviar Declaración" />
+        <input type="submit"  class="buttons-btn btn" [class.orange]="form.valid" 
+              [class.btn--default]=" !form.valid" [disabled]=" !form.valid" 
+              value="Enviar Declaración" />
       </div>
       <div class="info" *ngIf="loading">
         <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
@@ -170,7 +177,7 @@
   </form>
 </div>
 
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header bg-security text-white">
@@ -228,10 +235,10 @@
           </div>
         </form>
 
-        <form class="m_form" *ngIf="editar" [formGroup]="formEditar" (ngSubmit)="ModificarBeneficiario()" >
+        <form class="m_form" *ngIf="editar" [formGroup]="formEditar" (ngSubmit)="ModificarBeneficiario()">
           <div class="form-group" [class.info--error]="checkIsValidA('rutAgregado')">
             <label for="recipient-name" class="info-label">RUT Beneficiario:</label>
-            <input type="text" disabled  class="info-input" placeholder="Ej: 12.345.678-9" formControlName="rutEditar"
+            <input type="text" disabled class="info-input" placeholder="Ej: 12.345.678-9" formControlName="rutEditar"
               maxlength="9" formatRut>
           </div>
           <div class="form-group">
@@ -264,20 +271,9 @@
           <div class="info">
             <button type="submit" [disabled]="!formEditar.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
               class="btn orange">Editar</button>
-              <button id="btnEditar" data-dismiss="modal" style="display:none"></button>
+            <button id="btnEditar" data-dismiss="modal" style="display:none"></button>
           </div>
         </form>
-      </div>
-      <div class="modal-footer">
-        <ul class="li p-0">
-          <li>
-            <p class="   bold ">Propietario con participación mayor o igual a 10%</p>
-          </li>
-          <li>
-            <p class="  ">Identifique las personas naturales que tienen una participación en la Empresa
-              igual o mayor al 10%. </p>
-          </li>
-        </ul>
       </div>
     </div>
   </div>
@@ -291,6 +287,7 @@
           <li>Declaración de beneficiarios ingresada satisfactoriamente.</li>
           <li>Declarante: Carlos Vidal</li>
           <li>Fecha: {{FechaActual | date:'dd/MM/yyyy HH:mm:ss'}}</li>
+          <li>Ante consultas contactarse al correo <a href="">bfinales@security.cl</a></li>
         </ul>
       </div>
     </div>
