@@ -6,7 +6,7 @@
           <p>RUT</p>
         </div>
         <div class="col-md-6">
-          <p class="black">{{empresa.rut | rut}}</p>
+           <p class="black">{{empresa.rut | rut}}</p> 
         </div>
       </div>
     </div>
@@ -22,75 +22,86 @@
 
     </div>
   </div>
-  
+
   <form *ngIf="!existsProcess" class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
-      <div class="row">
-          <div class="col-md-12">
-            <div class="info mb-4">
-              <!--  *ngIf="form.valid && lstPropietario.length<10 && porcentajeAcumulado<100" -->
-              <button (click)="Cambiar()" type="button" [disabled]="!form.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
-                class="btn orange" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
-                Propietario </button>
-            </div>
-            <section class="vs_client w-100" id="vs_cnt">
-              <div class="cnt_data" id="information">
-                <ul class="data data--media">
-                  <li class="point">Rut</li>
-                  <li class="point">Nombre</li>
-                  <li class="point">Participación</li>
-                  <li class="point"></li>
-                </ul>
-                <ul class="data data--media" *ngFor="let beneficiario of lstPropietario ">
-                  <li class="point">
-                    <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
-                  </li>
-                  <li class="point">
-                    <div class="txt_medium_gray">
-                      {{beneficiario.nombrePropietario}} {{beneficiario.apellidoPropietario}}
-                    </div>
-                  </li>
-                  <li class="point">
-                    <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
-                  </li>
-                  <li class="point modify">
-                    <i class="fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
-                      data-target="#exampleModal" data-whatever="@mdo"></i>
-                    <i class="fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
-                  </li>
-                </ul>
-              </div>
-              <div class="mobile_data">
-                <ul class="data" *ngFor="let beneficiario of lstPropietario ">
-                  <li class="point">
-                    <div class="txt_litle">Rut</div>
-                    <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
-                  </li>
-                  <li class="point">
-                    <div class="txt_litle">Nombre</div>
-                    <div class="txt_medium_gray">
-                      {{beneficiario.nombrePropietario}} {{beneficiario.apellidoPropietario}}
-                    </div>
-                  </li>
-                  <li class="point">
-                    <div class="txt_litle">Participación</div>
-                    <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
-                  </li>
-      
-                  <li class="point"></li>
-                  <li class="point modify">
-                    <i class="modify-edit fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
-                      data-target="#exampleModal" data-whatever="@mdo"></i>
-                    <i class="modify-edit fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
-      
-                  </li>
-                </ul>
-              </div>
-              <div *ngIf="lstPropietario.length===0">
-                Sin Beneficiarios Declarados
-              </div>
-            </section>
-          </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p class="  bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
+
+        <p class="  text-justify"> Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
+          o extranjera,
+          que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de
+          los
+          derechos a voto de su empresa.
+          Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
+          sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
+          derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
+        <div class="info mb-5 mt-5">
+          <!--  *ngIf="form.valid && lstPropietario.length<10 && porcentajeAcumulado<100" -->
+          <button (click)="Cambiar()" type="button" [disabled]="!form.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
+            class="btn orange" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
+            Propietario </button>
         </div>
+
+        <section class="vs_client w-100" id="vs_cnt">
+          <div class="cnt_data" id="information">
+            <ul class="data data--media upper">
+              <li class="point">Rut</li>
+              <li class="point">Nombre</li>
+              <li class="point">Participación</li>
+              <li class="point"></li>
+            </ul>
+            <ul class="data data--media" *ngFor="let beneficiario of lstPropietario ">
+              <li class="point">
+                <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
+              </li>
+              <li class="point">
+                <div class="txt_medium_gray">
+                  {{beneficiario.nombre}} {{beneficiario.apellidos}}
+                </div>
+              </li>
+              <li class="point">
+                <div class="txt_medium_gray">{{beneficiario.participacionString}}%</div>
+              </li>
+              <li class="point modify">
+                <i class="fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
+                  data-target="#exampleModal" data-whatever="@mdo"></i>
+                <i class="fas fa-trash-alt" (click)="EliminarBeneficiario(beneficiario)"></i>
+              </li>
+            </ul>
+          </div>
+          <div class="mobile_data">
+            <ul class="data upper" *ngFor="let beneficiario of lstPropietario ">
+              <li class="point">
+                <div class="txt_litle">Rut</div>
+                <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
+              </li>
+              <li class="point">
+                <div class="txt_litle">Nombre</div>
+                <div class="txt_medium_gray">
+                  {{beneficiario.nombre}} {{beneficiario.apellidos}}
+                </div>
+              </li>
+              <li class="point">
+                <div class="txt_litle">Participación</div>
+                <div class="txt_medium_gray">{{beneficiario.participacionString}}%</div>
+              </li>
+
+              <li class="point"></li>
+              <li class="point modify">
+                <i class="modify-edit fas fa-pencil-alt pr-2" style="color :white" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
+                  data-target="#exampleModal" data-whatever="@mdo"></i>
+                <i class="modify-edit fas fa-trash-alt" style="color :white"(click)="EliminarBeneficiario(beneficiario)"></i>
+
+              </li>
+            </ul>
+          </div>
+          <div *ngIf="lstPropietario.length===0">
+            Sin Beneficiarios Declarados
+          </div>
+        </section>
+      </div>
+    </div>
     <p class="mt-4">Identificación del Declarante:</p>
     <div class="row">
       <div class="col-md-6" [class.info--error]="checkIsValid('rut')">
@@ -143,28 +154,13 @@
             </div>
           </div>
         </div>
-        
-          <p class="  bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
-
-          <p class="  text-justify"> Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
-            o extranjera,
-            que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de
-            los
-            derechos a voto de su empresa.
-            Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
-            sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
-            derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
-            <p class="text-justify bold ">Propietario con participación mayor o igual a 10%</p>
-            <p class="  ">Identifique las personas naturales que tienen una participación en la Empresa
-                igual o mayor al 10%. </p>
       </div>
     </div>
 
-    <div class="info mt-2">
+    <div class="info  mt-5">
       <div *ngIf="!loading">
-        <input type="submit"  class="buttons-btn btn" [class.orange]="form.valid" 
-              [class.btn--default]=" !form.valid" [disabled]=" !form.valid" 
-              value="Enviar Declaración" />
+        <input type="submit" class="buttons-btn btn" [class.orange]="form.valid" [class.btn--default]=" !form.valid"
+          [disabled]=" !form.valid" value="Enviar Declaración" />
       </div>
       <div class="info" *ngIf="loading">
         <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
@@ -187,6 +183,10 @@
         </button>
       </div>
       <div class="modal-body">
+        <p class="  text-justify">Identifique a las personas naturales que tienen participación en la empresa,
+          igual o mayor al 10% y/o
+          aquellas con participación menor al 10% que toman decisiones relevantes en la empresa (ejercen control
+          efectivo).</p>
         <form class="m_form" *ngIf="!editar" [formGroup]="formAgregar" (ngSubmit)="GuardarPropietario()">
           <div class="form-group" [class.info--error]="checkIsValidA('rutAgregado')">
             <label for="recipient-name" class="info-label">RUT Beneficiario:</label>
@@ -229,7 +229,7 @@
               <span class="text-danger">Rut ya ingresado</span>
             </div>
           </div>
-          <div class="info">
+          <div class="info mb-2">
             <button type="submit" *ngIf="!editar" [disabled]="!formAgregar.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
               class="btn orange">Agregar</button>
           </div>
@@ -261,14 +261,14 @@
             <label for="recipient-name" class="info-label">Participación:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5,43 " formControlName="participacionEditar"
               maxlength="5" appPhoneChar>
-            <div *ngIf=" formEditar.get('participacionEditar').hasError('InvalidPorcentaje') && !formEditar.get('participacionEditar').valid && formAgregar.get('participacion').touched">
+            <div *ngIf=" formEditar.get('participacionEditar').hasError('InvalidPorcentaje') && !formEditar.get('participacionEditar').valid && formAgregar.get('participacionEditar').touched">
               <span class="text-danger">Participación Incorrecto</span>
             </div>
             <div *ngIf="formEditar.get('participacionEditar').hasError('InvalidSuperior')">
               <span class="text-danger">Participación superior al permitido</span>
             </div>
           </div>
-          <div class="info">
+          <div class="info mb-2">
             <button type="submit" [disabled]="!formEditar.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
               class="btn orange">Editar</button>
             <button id="btnEditar" data-dismiss="modal" style="display:none"></button>
@@ -287,6 +287,7 @@
           <li>Declaración de beneficiarios ingresada satisfactoriamente.</li>
           <li>Declarante: Carlos Vidal</li>
           <li>Fecha: {{FechaActual | date:'dd/MM/yyyy HH:mm:ss'}}</li>
+          <br>
           <li>Ante consultas contactarse al correo <a href="">bfinales@security.cl</a></li>
         </ul>
       </div>

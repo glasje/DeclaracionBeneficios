@@ -2,11 +2,11 @@
  * Model Propietario
  */
 export class Propietario {
-  id: number
+  ideDecla: number
   /**
    * Rut Propietario
    */
-  rutPropietario: string;
+  rut: string;
   /**
      * Rut Propietario
      */
@@ -15,19 +15,24 @@ export class Propietario {
   /**
      * Rut Propietario
      */
-  dvPropietario: string;
+  dv: string;
   /**
    * Nombre Propietario
    */
-  nombrePropietario: string;
+  nombre: string;
 
   /**
    * Apellido Propietario
    */
-  apellidoPropietario: string;
+  apellidos: string;
 
   /**
    * Participación
    */
   participacion: number;
+
+  /**
+   * Participación
+   */
+  participacionString: string;
 }

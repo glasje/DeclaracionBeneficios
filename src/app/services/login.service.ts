@@ -19,7 +19,7 @@ export class LoginService {
   ValidarPassword(empresa):Observable<any>{
     const endPoint= RestApi.Login.endPoint+RestApi.Login.methods.ValidarPassword;
     let headers = new HttpHeaders(RestApi.Headers.headerJson);
-
-    return this.httCliente.post(endPoint,empresa, { headers: headers });
+    let empresaJSON = JSON.stringify(empresa)
+    return this.httCliente.post(endPoint,empresaJSON, { headers: headers });
   }
 }

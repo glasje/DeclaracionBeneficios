@@ -23,8 +23,12 @@ export class BeneficiarioService {
   
     
     const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.obtenerPropietario;
+   
+    let id={
+      "ideDecla":5
+    }
     let header = new HttpHeaders(RestApi.Headers.headerJson);
-    return this.httCliente.post(url, empresa, { headers: header });
+    return this.httCliente.post(url, id, { headers: header });
   }
 
   GuardarPropietario(propietario: Propietario): Observable<any> {
@@ -48,7 +52,7 @@ export class BeneficiarioService {
   EliminarBeneficiario(beneficiario): Propietario[] {
     let rut = beneficiario.rut;
 
-    this.lstBeneficiarios = this.lstBeneficiarios.filter(beneficiario => beneficiario.rutPropietario !== rut);
+    this.lstBeneficiarios = this.lstBeneficiarios.filter(beneficiario => beneficiario.rut !== rut);
     return this.lstBeneficiarios;
   }
 }

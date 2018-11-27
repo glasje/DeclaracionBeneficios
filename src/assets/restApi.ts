@@ -1,13 +1,13 @@
 export const RestApi = {
   Login: {
-    endPoint: 'https://coreapideclarcbenef20181118120007.azurewebsites.net/',
+    endPoint: 'https://declarcbenefapi.azurewebsites.net/',
     methods:{
       ValidarRut:'api/Empresa/ValidarRut/',
       ValidarPassword :'api/Empresa/ValidarClave',
     }
   },
   Declarante :{
-    endPoint :'https://coreapideclarcbenef20181118120007.azurewebsites.net/',
+    endPoint :'https://declarcbenefapi.azurewebsites.net/',
     methods:{
       obtenerPropietario: 'api/Declaracion/ObtenerPropietarios',
       GuardarPropietario :'api/Declaracion/GuardarPropietario'

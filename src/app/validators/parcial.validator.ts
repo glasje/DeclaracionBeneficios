@@ -7,24 +7,30 @@ import { isNullOrUndefined } from 'util';
  */
 export class ParcialValidator {
 
-  constructor(){
+  constructor() {
 
   }
   /**
    * Valida un rut.
    * @param control Objecto que contiene los datos a validar.
    */
-  static Correcto(control: FormControl): any {  
+  static Correcto(control: FormControl): any {
+    let numerico = control.value;
+    let cadena = "";
 
-    if(control.value!= null){
-    if (control.value<101) {
-      return null;
-    } else {
-      return {
-        'InvalidPorcentaje': true
-      };
+    if (numerico) {
+      cadena = numerico.toString();
+      cadena = cadena.replace('.', ',');
+      
+      if (parseInt(cadena) < 101) {
+
+        return null;
+      } else {
+        return {
+          'InvalidPorcentaje': true
+        };
+      }
     }
   }
 }
-}
-  
+

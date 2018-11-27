@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { LoginService } from 'src/app/services/login.service';
 import { BeneficiarioService } from 'src/app/services/beneficiario.service';
 import { Empresa } from 'src/app/models/empresa';
+import { TokenJwtService } from 'src/app/services/token-jwt.service';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,8 @@ export class LoginComponent implements OnInit {
 
   constructor(private router: Router,
     private _loginService: LoginService,
-    private _beneficiarioService: BeneficiarioService) {
+    private _beneficiarioService: BeneficiarioService,
+    private _tokenService : TokenJwtService) {
     this.form = new FormGroup({
       rut: new FormControl(null, {
         validators: [Validators.required, RutValidator.checkRut]
@@ -41,6 +43,7 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._tokenService.ClearToken();
   }
   /**
      * Método que retorna si el campo del formulario es válido o no.
@@ -75,7 +78,12 @@ export class LoginComponent implements OnInit {
             this.loading = false;
             this.isClient = true;
             this.razonSocial=this.consultaEmpresa.data.razonSocial;
-            this.empresa.idEmpresa=this.consultaEmpresa.data.id;
+            this.empresa.razonSocial=this.razonSocial;
+            this.empresa.rut = this.consultaEmpresa.data.rut;
+            this.empresa.ideEmp=this.consultaEmpresa.data.ideEmp;
+            this.empresa.estado= this.consultaEmpresa.data.estado;
+            this.empresa.clave= this.consultaEmpresa.data.clave;
+            this.empresa.dv=this.consultaEmpresa.data.dv;
           } else {
             this.mensaje = this.consultaEmpresa.data.mensaje;
             this.loading = false;
@@ -105,11 +113,6 @@ export class LoginComponent implements OnInit {
       rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
     
       let clave = this.formPassword.get('password').value;
-      let consultaEmpresa = {
-        rut: rut,
-        password: clave
-      }
-
       /*  setTimeout(() => {
         if(clave==='P2ssw0rd'){
           this.router.navigate(['/declaracion']);
@@ -120,28 +123,22 @@ export class LoginComponent implements OnInit {
           this.formPassword.reset();
         }
       }, 1000);   */
-      this._loginService.ValidarPassword(consultaEmpresa).subscribe(
+      this._loginService.ValidarPassword(this.empresa).subscribe(
         data => {
       
           this.consultaEmpresa = data;
-        
-          if (this.consultaEmpresa.data.empresa.autorizado && 
-              this.consultaEmpresa.data.empresa.existe && 
-              !this.consultaEmpresa.data.enviado) {
+          if (this.consultaEmpresa.exito && 
+              this.consultaEmpresa.mensaje==='OK') {
             this.empresa.id= this.consultaEmpresa.data.id;
-            this.empresa.rut=this.consultaEmpresa.data.empresa.rut;
-            this.empresa.dv = this.consultaEmpresa.data.empresa.dv;
-            this.empresa.razonSocial= this.consultaEmpresa.data.empresa.razonSocial;
+            this.empresa.ideDecla = this.consultaEmpresa.data.declarante.ideDecla;
+            this.empresa.declarante = this.consultaEmpresa.data.declarante;
             this._beneficiarioService.empresa= this.empresa;
             this.router.navigate(['/declaracion']);
             this.loading = false;
 
-          } else if(!this.consultaEmpresa.data.empresa.autorizado){
+          } else{
             this.loading = false;
-            this.error = this.consultaEmpresa.data.empresa.mensaje;
-          }else if(this.consultaEmpresa.data.enviado){
-            this.loading = false;
-            this.error = this.consultaEmpresa.data.mensaje;
+            this.error = this.consultaEmpresa.mensaje;
           }
 
 

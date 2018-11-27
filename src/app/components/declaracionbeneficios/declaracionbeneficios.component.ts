@@ -7,6 +7,9 @@ import { ModalComponent } from '../modal/modal.component';
 import { element } from '@angular/core/src/render3/instructions';
 import { Propietario } from 'src/app/models/propietario';
 import { RutPipe } from 'ng2-rut';
+import { Declarante } from 'src/app/models/declarante';
+import { from } from 'rxjs';
+import { core } from '@angular/compiler';
 
 @Component({
   selector: 'app-declaracionbeneficios',
@@ -28,6 +31,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   editar: boolean;
   formEditar: FormGroup;
   empresa: any;
+  declarante: Declarante;
   constructor(private _beneficiarioService: BeneficiarioService,
     private modalService: ModalService) {
     //Form declaracion de beneficios
@@ -94,12 +98,26 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     this.validacion = true;
     this.porcentajeAcumulado = 0;
     this.editar = false;
+    this.declarante = new Declarante();
   }
 
   ngOnInit() {
     this.ObtenerPropietario();
     this.empresa = this._beneficiarioService.empresa;
-    this.empresa.rut = this.empresa.rut + this.empresa.dv;
+    this.empresa.rut = this.empresa.rut + this.empresa.dv; 
+    this.declarante.rutCompleto =this.empresa.declarante.rut + this.empresa.declarante.dv;
+    this.declarante.nombre = this.empresa.declarante.nombre;
+    this.declarante.apellido = this.empresa.declarante.apellidos;
+    this.declarante.correo=this.empresa.declarante.email;
+    this.declarante.relacionEmpresa=this.empresa.declarante.relacion;
+    this.form.setValue({
+      rut : this.declarante.rutCompleto,
+      nombre : this.declarante.nombre,
+      apellido :this.declarante.apellido,
+      relacionEmpresa :this.declarante.relacionEmpresa,
+      correo :this.declarante.correo
+    })
+
   }
   public checkIsValid(field: string) {
     return (this.form.get(field).invalid && (this.form.get(field).dirty || this.form.get(field).touched));
@@ -128,18 +146,19 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     let dataAux;
     this._beneficiarioService.ObtenerPropietario(this.empresa).subscribe(
       (data) => {
+    
         dataAux = data;
         this.lstPropietario = dataAux.data;
 
         this.lstPropietario.forEach(element => {
-          element.rutCompleto = element.rutPropietario + element.dvPropietario;
+          element.rutCompleto = element.rut + element.dv;
+          element.participacionString=element.participacion.toString().replace('.',',');
         });
-    
+  
         this.CalcularPorcentaje();
       },
       (error) => {
         this.lstPropietario = [];
-        console.log('error', error);
       }
     )
   }
@@ -149,10 +168,11 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     let porcentaje = 0;
     let suma = 0;
     this.CalcularPorcentaje();
-    porcentaje = this.formAgregar.get('participacion').value;
+    porcentaje = this.formAgregar.get('participacion').value.replace(',','.');
     suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString());
+ 
     lst.forEach(element => {
-      if (element.rutPropietario === this.formAgregar.get('rutAgregado').value) {
+      if (element.rut === this.formAgregar.get('rutAgregado').value) {
         this.validacion = this.formAgregar.invalid;
         return this.formAgregar.controls['rutAgregado'].setErrors({ 'Repetido': true });
       }
@@ -169,13 +189,14 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       let dv = rut.substring(rut.length - 2, rut.length - 1).replace('.', '').replace('.', '');
       rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
     
-      this.propietario.id = this.empresa.idEmpresa;
-      this.propietario.rutPropietario = rut;
-      this.propietario.dvPropietario = dv
-      this.propietario.nombrePropietario = this.formAgregar.get('nombreAgregar').value;
-      this.propietario.apellidoPropietario = this.formAgregar.get('apellidoAgregar').value;
-      this.propietario.participacion = this.formAgregar.get('participacion').value;
-     
+      this.propietario.ideDecla =  this.empresa.ideDecla;
+      this.propietario.rut = rut;
+      this.propietario.dv = dv
+      this.propietario.nombre = this.formAgregar.get('nombreAgregar').value;
+      this.propietario.apellidos = this.formAgregar.get('apellidoAgregar').value;
+      this.propietario.participacion =parseFloat(this.formAgregar.get('participacion').value.replace(',','.')) ;
+      this.propietario.participacionString = this.formAgregar.get('participacion').value;
+ 
       this._beneficiarioService.GuardarPropietario(this.propietario).subscribe(
         (data) => {
           this.ObtenerPropietario();
@@ -207,23 +228,27 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     }
     this.porcentajeAcumulado = suma;
     this._beneficiarioService.porcentajeAcumulado = this.porcentajeAcumulado;
+
     return this.porcentajeAcumulado;
   }
   EditarPropietario(beneficiario) {
     let propietarioEdit = new Propietario();
     this.editar = true;
-    let rut = beneficiario.rutPropietario + beneficiario.dvPropietario;
+    let rut = beneficiario.rut + beneficiario.dv;
+    let parcial = beneficiario.participacionString;
+    let nombre 
     propietarioEdit.rutCompleto = rut;
-    propietarioEdit.nombrePropietario = beneficiario.nombrePropietario;
-    propietarioEdit.apellidoPropietario = beneficiario.apellidoPropietario;
+    propietarioEdit.nombre = beneficiario.nombre;
+    propietarioEdit.apellidos = beneficiario.apellidos;
     propietarioEdit.participacion = beneficiario.participacion;
-
+ 
     this.formEditar.setValue({
       rutEditar: propietarioEdit.rutCompleto,
-      participacionEditar: propietarioEdit.participacion,
-      nombreEditar: propietarioEdit.nombrePropietario,
-      apellidoEditar: propietarioEdit.apellidoPropietario
+      participacionEditar:parcial,
+      nombreEditar: propietarioEdit.nombre,
+      apellidoEditar: propietarioEdit.apellidos
     })
+   
   }
 
   ModificarBeneficiario() {
@@ -236,17 +261,30 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       return this.formEditar.controls['participacionEditar'].setErrors({ 'InvalidSuperior': true });
     }
     if (this.formEditar.valid) {
-      let rut = this.formEditar.get('rutEditar').value
+      this.propietario = new Propietario();
+      const rutPipe = new RutPipe();
+      let rut = rutPipe.transform(this.formEditar.get('rutEditar').value).replace('-', '');
+      let dv = rut.substring(rut.length - 2, rut.length - 1).replace('.', '').replace('.', '');
+      rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
 
-      this.lstPropietario.forEach(element => {
-        if (rut === element.rutCompleto) {
-          element.nombrePropietario = this.formEditar.get('nombreEditar').value;
-          element.apellidoPropietario = this.formEditar.get('apellidoEditar').value;
-          element.participacion = this.formEditar.get('participacionEditar').value;
+      this.propietario.ideDecla = this.empresa.ideDecla;
+      this.propietario.rut = rut;
+      this.propietario.dv = dv
+      this.propietario.nombre = this.formEditar.get('nombreEditar').value;
+      this.propietario.apellidos = this.formEditar.get('apellidoEditar').value;
+      this.propietario.participacion =parseFloat(this.formEditar.get('participacionEditar').value.replace(',','.')) ;
+      this.propietario.participacionString = this.formEditar.get('participacionEditar').value;
+     
+      this._beneficiarioService.GuardarPropietario(this.propietario).subscribe(
+        (data) => {
+          this.ObtenerPropietario();
+          this.formEditar.reset();
           document.getElementById('btnEditar').click();
-
+        },
+        (error) => {
+          console.log('error', error);
         }
-      })
+      );
     } else {
       Object.keys(this.formEditar.controls).forEach(key => {
         this.formEditar.get(key).markAsTouched();
