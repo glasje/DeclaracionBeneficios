@@ -14,16 +14,16 @@ import { TokenJwtService } from 'src/app/services/token-jwt.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  form: any;
-  formPassword: any;
-  loading: boolean;
-  error: string;
-  isClient: any;
-  existsProcess: boolean;
-  consultaEmpresa: any;
-  mensaje: any;
-  empresa: Empresa;
-  razonSocial: any;
+  private form: any;
+  private formPassword: any;
+  private loading: boolean;
+  private error: string;
+  private isClient: any;
+  private existsProcess: boolean;
+  private consultaEmpresa: any;
+  private mensaje: any;
+  private empresa: Empresa;
+  private razonSocial: any;
 
   constructor(private router: Router,
     private _loginService: LoginService,
@@ -113,6 +113,7 @@ export class LoginComponent implements OnInit {
       rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
     
       let clave = this.formPassword.get('password').value;
+      this.empresa.clave = clave;
       /*  setTimeout(() => {
         if(clave==='P2ssw0rd'){
           this.router.navigate(['/declaracion']);
@@ -127,10 +128,12 @@ export class LoginComponent implements OnInit {
         data => {
       
           this.consultaEmpresa = data;
+          console.log('data',this.consultaEmpresa)
           if (this.consultaEmpresa.exito && 
+            this.consultaEmpresa.data.ideEmpNavigation.autorizado &&
               this.consultaEmpresa.mensaje==='OK') {
-            this.empresa.id= this.consultaEmpresa.data.id;
-            this.empresa.ideDecla = this.consultaEmpresa.data.declarante.ideDecla;
+            this.empresa.id= this.consultaEmpresa.data.ideEmp;
+            this.empresa.ideDecla = this.consultaEmpresa.data.ideDecla;
             this.empresa.declarante = this.consultaEmpresa.data.declarante;
             this._beneficiarioService.empresa= this.empresa;
             this.router.navigate(['/declaracion']);
@@ -138,7 +141,7 @@ export class LoginComponent implements OnInit {
 
           } else{
             this.loading = false;
-            this.error = this.consultaEmpresa.mensaje;
+            this.error = this.consultaEmpresa.data.ideEmpNavigation.mensaje;
           }
 
 

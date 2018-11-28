@@ -17,7 +17,7 @@ export class Declarante {
    * Apellido declarante
    */
   apellido: string;
-
+  nombreCompleto : string;
   /**
    * Relación empresa 
    */

@@ -43,6 +43,8 @@
             Propietario </button>
         </div>
 
+<h5 style="color:#150761">PROPIETARIOS</h5>
+<br>
         <section class="vs_client w-100" id="vs_cnt">
           <div class="cnt_data" id="information">
             <ul class="data data--media upper">
@@ -52,16 +54,16 @@
               <li class="point"></li>
             </ul>
             <ul class="data data--media" *ngFor="let beneficiario of lstPropietario ">
-              <li class="point">
-                <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
+              <li class="point ">
+                <div class="txt_medium_gray upper">{{beneficiario.rutCompleto | rut | uppercase}}</div>
               </li>
-              <li class="point">
-                <div class="txt_medium_gray">
-                  {{beneficiario.nombre}} {{beneficiario.apellidos}}
+              <li class="point ">
+                <div class="txt_medium_gray upper">
+                  {{beneficiario.nombre | uppercase}} {{beneficiario.apellidos | uppercase}}
                 </div>
               </li>
-              <li class="point">
-                <div class="txt_medium_gray">{{beneficiario.participacionString}}%</div>
+              <li class="point ">
+                <div class="txt_medium_gray upper">{{beneficiario.participacionString}}%</div>
               </li>
               <li class="point modify">
                 <i class="fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
@@ -76,13 +78,13 @@
                 <div class="txt_litle">Rut</div>
                 <div class="txt_medium_gray">{{beneficiario.rutCompleto | rut}}</div>
               </li>
-              <li class="point">
+              <li class="point upper">
                 <div class="txt_litle">Nombre</div>
                 <div class="txt_medium_gray">
-                  {{beneficiario.nombre}} {{beneficiario.apellidos}}
+                  {{beneficiario.nombre | uppercase}} {{beneficiario.apellidos | uppercase}}
                 </div>
               </li>
-              <li class="point">
+              <li class="point upper">
                 <div class="txt_litle">Participación</div>
                 <div class="txt_medium_gray">{{beneficiario.participacionString}}%</div>
               </li>
@@ -285,7 +287,7 @@
       <div class="col-md-12">
         <ul class="li p-0">
           <li>Declaración de beneficiarios ingresada satisfactoriamente.</li>
-          <li>Declarante: Carlos Vidal</li>
+          <li>Declarante: {{declarante.nombreCompleto}}</li>
           <li>Fecha: {{FechaActual | date:'dd/MM/yyyy HH:mm:ss'}}</li>
           <br>
           <li>Ante consultas contactarse al correo <a href="">bfinales@security.cl</a></li>

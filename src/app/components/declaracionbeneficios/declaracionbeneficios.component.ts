@@ -17,21 +17,39 @@ import { core } from '@angular/compiler';
   styleUrls: ['./declaracionbeneficios.component.css']
 })
 export class DeclaracionbeneficiosComponent implements OnInit {
-
-  public loading: boolean;
-  public form: FormGroup;
-  formPassword: FormGroup;
-  lstPropietario: Propietario[];
-  formAgregar: FormGroup;
-  propietario: Propietario;
-  validacion: boolean;
-  porcentajeAcumulado: number;
-  existsProcess: boolean;
-  FechaActual: Date;
-  editar: boolean;
-  formEditar: FormGroup;
-  empresa: any;
-  declarante: Declarante;
+  //Flag que indica si se debe mostrar/ocultar el spinner de carga
+  private loading: boolean;
+  //Formulario de declaracion de beneficios
+  private form: FormGroup;
+  //formulario de password
+  private formPassword: FormGroup;
+  //Lista de propietarios
+  private lstPropietario: Propietario[];
+  //Formulario que almacena los datos para agregar propietarios
+  private formAgregar: FormGroup;
+  //Entidad Propietario
+  private propietario: Propietario;
+  //Flag que indica si esta validado el formulario
+  public validacion: boolean;
+  //Total de % de participacion
+  private porcentajeAcumulado: number;
+  //
+  public existsProcess: boolean;
+  //Variable que almacena la fecha actual
+  public FechaActual: Date;
+  //Flag que indica si se esta Editando un propietario
+  public editar: boolean;
+  //Formulario que almacena los datos a editar de un propietario
+  private formEditar: FormGroup;
+  //Entidad Empresa
+  private empresa: any;
+  //Entidad Declarante
+  private declarante: Declarante;
+  /**
+   * Constructor que inicia los Servicios y formularios
+   * @param _beneficiarioService 
+   * @param modalService 
+   */
   constructor(private _beneficiarioService: BeneficiarioService,
     private modalService: ModalService) {
     //Form declaracion de beneficios
@@ -75,10 +93,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         validators: [Validators.required],
         updateOn: 'blur'
       })
-
-
-
     });
+
     //Form editar beneficiario
     this.formEditar = new FormGroup({
       rutEditar: new FormControl(null),
@@ -94,13 +110,16 @@ export class DeclaracionbeneficiosComponent implements OnInit {
         updateOn: 'blur'
       })
     });
+
     this.lstPropietario = [];
     this.validacion = true;
     this.porcentajeAcumulado = 0;
     this.editar = false;
     this.declarante = new Declarante();
   }
-
+/**
+ * 
+ */
   ngOnInit() {
     this.ObtenerPropietario();
     this.empresa = this._beneficiarioService.empresa;
@@ -108,8 +127,10 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     this.declarante.rutCompleto =this.empresa.declarante.rut + this.empresa.declarante.dv;
     this.declarante.nombre = this.empresa.declarante.nombre;
     this.declarante.apellido = this.empresa.declarante.apellidos;
+    this.declarante.nombreCompleto=this.declarante.nombre+' '+this.declarante.apellido;
     this.declarante.correo=this.empresa.declarante.email;
     this.declarante.relacionEmpresa=this.empresa.declarante.relacion;
+    
     this.form.setValue({
       rut : this.declarante.rutCompleto,
       nombre : this.declarante.nombre,
@@ -119,29 +140,39 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     })
 
   }
+  /**
+   * 
+   * @param field 
+   */
   public checkIsValid(field: string) {
     return (this.form.get(field).invalid && (this.form.get(field).dirty || this.form.get(field).touched));
   }
-
+/**
+ * 
+ * @param field 
+ */
   public checkIsValidA(field: string) {
     return (this.formAgregar.get(field).invalid && (this.formAgregar.get(field).dirty || this.formAgregar.get(field).touched));
   }
-
+/**
+ * 
+ */
   formSubmit() {
-
     if (this.form.valid) {
       this.loading = true;
       setTimeout(() => {
         this.FechaActual = new Date();
         this.existsProcess = true
       }, 2000);
-
     } else {
       Object.keys(this.form.controls).forEach(key => {
         this.form.get(key).markAsTouched();
       });
     }
   }
+  /**
+   * Metodo que obtiene los propietarios del declarante.
+   */
   ObtenerPropietario() {
     let dataAux;
     this._beneficiarioService.ObtenerPropietario(this.empresa).subscribe(
@@ -162,7 +193,9 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       }
     )
   }
-
+/**
+ * Metodo agrega un propietario
+ */
   GuardarPropietario() {
     let lst = this._beneficiarioService.lstBeneficiarios;
     let porcentaje = 0;
@@ -214,9 +247,15 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       });
     }
   }
+  /**
+   * Metodo que cambia el Flag para indicar si se esta editando o no.
+   */
   Cambiar() {
     this.editar = false;
   }
+  /**
+   * Metodo que calcula el porcentaje total de participacion entre los propietrios.
+   */
   CalcularPorcentaje() {
     let suma: number;
     suma = 0;
@@ -231,12 +270,15 @@ export class DeclaracionbeneficiosComponent implements OnInit {
 
     return this.porcentajeAcumulado;
   }
+  /**
+   * Metodo que edita los datos actuales de un propietario
+   * @param beneficiario 
+   */
   EditarPropietario(beneficiario) {
     let propietarioEdit = new Propietario();
     this.editar = true;
     let rut = beneficiario.rut + beneficiario.dv;
     let parcial = beneficiario.participacionString;
-    let nombre 
     propietarioEdit.rutCompleto = rut;
     propietarioEdit.nombre = beneficiario.nombre;
     propietarioEdit.apellidos = beneficiario.apellidos;
@@ -250,7 +292,9 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     })
    
   }
-
+/**
+ * Metodo que envia los datos del propietario a editar a un servicio.
+ */
   ModificarBeneficiario() {
     let porcentaje = 0;
     let suma = 0;
@@ -291,7 +335,10 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       });
     }
   }
-
+/**
+ * Metodo que elimina a un propietario.
+ * @param beneficiario 
+ */
   EliminarBeneficiario(beneficiario) {
     let id = document.getElementById('modal');
     id.style.display = 'block'
