@@ -43,7 +43,19 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._tokenService.ClearToken();
+      this.ObtenerToken();
+  }
+  ObtenerToken(){
+    this._tokenService.ClearToken(); 
+    this._tokenService.GetTokenByService().subscribe(
+      data=>{
+        this._tokenService.SetToken(data.token);
+      },
+      error=>{
+        console.log(error);
+
+      }
+    );
   }
   /**
      * Método que retorna si el campo del formulario es válido o no.
@@ -58,17 +70,6 @@ export class LoginComponent implements OnInit {
       this.loading = true;
 
       let rut = this.form.get('rut').value;
-      /*   setTimeout(() => {
-          if(rut==='775539003'){
-            this.existsProcess=true;
-                this.loading = false;
-                this.isClient=true;
-          }else{
-            this.mensaje= 'Rut incorrecto';
-                this.loading=false;
-                this.form.reset();
-          }
-        }, 2000); */
 
       this._loginService.ValidarRut(rut).subscribe(
         data => {
@@ -114,28 +115,22 @@ export class LoginComponent implements OnInit {
     
       let clave = this.formPassword.get('password').value;
       this.empresa.clave = clave;
-      /*  setTimeout(() => {
-        if(clave==='P2ssw0rd'){
-          this.router.navigate(['/declaracion']);
-          this.loading = false;
-        }else{
-          this.error='clave incorrecta';
-          this.loading = false;
-          this.formPassword.reset();
-        }
-      }, 1000);   */
+    
       this._loginService.ValidarPassword(this.empresa).subscribe(
         data => {
-      
           this.consultaEmpresa = data;
-          console.log('data',this.consultaEmpresa)
+
           if (this.consultaEmpresa.exito && 
             this.consultaEmpresa.data.ideEmpNavigation.autorizado &&
               this.consultaEmpresa.mensaje==='OK') {
+
+           
             this.empresa.id= this.consultaEmpresa.data.ideEmp;
-            this.empresa.ideDecla = this.consultaEmpresa.data.ideDecla;
+           // this.empresa.ideDecla = this.consultaEmpresa.data.ideDecla;
             this.empresa.declarante = this.consultaEmpresa.data.declarante;
-            this._beneficiarioService.empresa= this.empresa;
+            this._tokenService.SetIdDecla(this.consultaEmpresa.data.ideDecla);   
+            this._tokenService.SetIdEmp(this.consultaEmpresa.data.ideEmp);   
+            this._beneficiarioService.empresa = this.empresa;
             this.router.navigate(['/declaracion']);
             this.loading = false;
 

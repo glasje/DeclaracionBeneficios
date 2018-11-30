@@ -10,6 +10,10 @@ import { RutPipe } from 'ng2-rut';
 import { Declarante } from 'src/app/models/declarante';
 import { from } from 'rxjs';
 import { core } from '@angular/compiler';
+import { TokenJwtService } from 'src/app/services/token-jwt.service';
+import { Empresa } from 'src/app/models/empresa';
+import { isNullOrUndefined } from 'util';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-declaracionbeneficios',
@@ -50,8 +54,15 @@ export class DeclaracionbeneficiosComponent implements OnInit {
    * @param _beneficiarioService 
    * @param modalService 
    */
-  constructor(private _beneficiarioService: BeneficiarioService,
-    private modalService: ModalService) {
+  constructor(
+    private _beneficiarioService: BeneficiarioService,
+    private modalService: ModalService,
+    private _tokenService: TokenJwtService,
+    private _router: Router
+  ) {
+    this.empresa = new Empresa();
+
+
     //Form declaracion de beneficios
     this.form = new FormGroup({
       rut: new FormControl(null, {
@@ -117,27 +128,35 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     this.editar = false;
     this.declarante = new Declarante();
   }
-/**
- * 
- */
+  /**
+   * 
+   */
   ngOnInit() {
-    this.ObtenerPropietario();
     this.empresa = this._beneficiarioService.empresa;
-    this.empresa.rut = this.empresa.rut + this.empresa.dv; 
-    this.declarante.rutCompleto =this.empresa.declarante.rut + this.empresa.declarante.dv;
-    this.declarante.nombre = this.empresa.declarante.nombre;
-    this.declarante.apellido = this.empresa.declarante.apellidos;
-    this.declarante.nombreCompleto=this.declarante.nombre+' '+this.declarante.apellido;
-    this.declarante.correo=this.empresa.declarante.email;
-    this.declarante.relacionEmpresa=this.empresa.declarante.relacion;
-    
-    this.form.setValue({
-      rut : this.declarante.rutCompleto,
-      nombre : this.declarante.nombre,
-      apellido :this.declarante.apellido,
-      relacionEmpresa :this.declarante.relacionEmpresa,
-      correo :this.declarante.correo
-    })
+    let idDecla = this._tokenService.GetIdDecla();
+    let idEmp = this._tokenService.GetIdEmp();
+    this.empresa.rut = this.empresa.rut + this.empresa.dv;
+    this.empresa.ideDecla = idDecla;
+    this.empresa.ideEmp = idEmp;
+    this.ObtenerPropietario();
+
+    if (this.empresa.declarante) {
+      this.declarante.rutCompleto = this.empresa.declarante.rut + this.empresa.declarante.dv;
+      this.declarante.nombre = this.empresa.declarante.nombre;
+      this.declarante.apellido = this.empresa.declarante.apellidos;
+      this.declarante.nombreCompleto = this.declarante.nombre + ' ' + this.declarante.apellido;
+      this.declarante.correo = this.empresa.declarante.email;
+      this.declarante.relacionEmpresa = this.empresa.declarante.relacion;
+
+      this.form.setValue({
+        rut: this.declarante.rutCompleto,
+        nombre: this.declarante.nombre,
+        apellido: this.declarante.apellido,
+        relacionEmpresa: this.declarante.relacionEmpresa,
+        correo: this.declarante.correo
+      })
+    }
+
 
   }
   /**
@@ -147,65 +166,114 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   public checkIsValid(field: string) {
     return (this.form.get(field).invalid && (this.form.get(field).dirty || this.form.get(field).touched));
   }
-/**
- * 
- * @param field 
- */
+  /**
+   * 
+   * @param field 
+   */
   public checkIsValidA(field: string) {
     return (this.formAgregar.get(field).invalid && (this.formAgregar.get(field).dirty || this.formAgregar.get(field).touched));
   }
-/**
- * 
- */
+  /**
+   * 
+   */
   formSubmit() {
     if (this.form.valid) {
       this.loading = true;
-      setTimeout(() => {
-        this.FechaActual = new Date();
-        this.existsProcess = true
-      }, 2000);
+      this.empresa.declarante;
+      let id = this._tokenService.GetIdDecla();
+      this.FechaActual = new Date();
+      this.declarante = new Declarante();
+      this.LlenarDeclarante();
+      let declaracionEnviar = {
+        "ideDecla": id,
+        declarante: {
+          "ideDecla": id,
+          "rut": this.declarante.rut,
+          "dv": this.declarante.dv,
+          "nombre": this.declarante.nombre,
+          "apellidos": this.declarante.apellido,
+          "relacion": this.declarante.relacionEmpresa,
+          "email": this.declarante.correo
+        }
+      };
+      this._beneficiarioService.EnviarDeclaracion(declaracionEnviar).subscribe(
+        data => {
+          this.existsProcess = true;
+          this.loading = false;
+        },
+        error => {
+          this.loading = false;
+        }
+      );
     } else {
       Object.keys(this.form.controls).forEach(key => {
         this.form.get(key).markAsTouched();
       });
     }
   }
+  LlenarDeclarante(): any {
+    const rutPipe = new RutPipe();
+    let rut = rutPipe.transform(this.form.get('rut').value).replace('-', '');
+    let dv = rut.substring(rut.length - 1, rut.length).replace('.', '').replace('.', '');
+    rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
+
+    this.declarante.rut = rut;
+    this.declarante.dv = dv;
+    this.declarante.nombre =this.form.get('nombre').value;
+    this.declarante.nombreCompleto=this.declarante.nombre+' '+this.declarante.apellido;
+    this.declarante.apellido =this.form.get('apellido').value;
+    this.declarante.relacionEmpresa =this.form.get('relacionEmpresa').value;
+    this.declarante.correo =this.form.get('correo').value;
+
+  }
   /**
    * Metodo que obtiene los propietarios del declarante.
    */
   ObtenerPropietario() {
     let dataAux;
+
     this._beneficiarioService.ObtenerPropietario(this.empresa).subscribe(
       (data) => {
-    
-        dataAux = data;
-        this.lstPropietario = dataAux.data;
+        if (data.status === 401) {
+          this._router.navigate(['/'])
+        } else {
 
-        this.lstPropietario.forEach(element => {
-          element.rutCompleto = element.rut + element.dv;
-          element.participacionString=element.participacion.toString().replace('.',',');
-        });
-  
-        this.CalcularPorcentaje();
+
+          dataAux = data;
+          this.lstPropietario = dataAux.data;
+
+          this.lstPropietario.forEach(element => {
+
+            element.rutCompleto = element.rut + element.dv;
+            element.participacionString = element.participacion.toString().replace('.', ',');
+          });
+
+          this.CalcularPorcentaje();
+        }
+
       },
       (error) => {
+
         this.lstPropietario = [];
       }
     )
   }
-/**
- * Metodo agrega un propietario
- */
+  /**
+   * Metodo agrega un propietario
+   */
   GuardarPropietario() {
     let lst = this._beneficiarioService.lstBeneficiarios;
     let porcentaje = 0;
     let suma = 0;
     this.CalcularPorcentaje();
-    porcentaje = this.formAgregar.get('participacion').value.replace(',','.');
+    porcentaje = this.formAgregar.get('participacion').value.replace(',', '.');
     suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString());
- 
+
+
     lst.forEach(element => {
       if (element.rut === this.formAgregar.get('rutAgregado').value) {
+
+
         this.validacion = this.formAgregar.invalid;
         return this.formAgregar.controls['rutAgregado'].setErrors({ 'Repetido': true });
       }
@@ -219,17 +287,17 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       this.propietario = new Propietario();
       const rutPipe = new RutPipe();
       let rut = rutPipe.transform(this.formAgregar.get('rutAgregado').value).replace('-', '');
-      let dv = rut.substring(rut.length - 2, rut.length - 1).replace('.', '').replace('.', '');
+      let dv = rut.substring(rut.length - 1, rut.length).replace('.', '').replace('.', '');
       rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
-    
-      this.propietario.ideDecla =  this.empresa.ideDecla;
+
+      this.propietario.ideDecla = this.empresa.ideDecla;
       this.propietario.rut = rut;
       this.propietario.dv = dv
       this.propietario.nombre = this.formAgregar.get('nombreAgregar').value;
       this.propietario.apellidos = this.formAgregar.get('apellidoAgregar').value;
-      this.propietario.participacion =parseFloat(this.formAgregar.get('participacion').value.replace(',','.')) ;
+      this.propietario.participacion = parseFloat(this.formAgregar.get('participacion').value.replace(',', '.'));
       this.propietario.participacionString = this.formAgregar.get('participacion').value;
- 
+
       this._beneficiarioService.GuardarPropietario(this.propietario).subscribe(
         (data) => {
           this.ObtenerPropietario();
@@ -283,18 +351,18 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     propietarioEdit.nombre = beneficiario.nombre;
     propietarioEdit.apellidos = beneficiario.apellidos;
     propietarioEdit.participacion = beneficiario.participacion;
- 
+
     this.formEditar.setValue({
       rutEditar: propietarioEdit.rutCompleto,
-      participacionEditar:parcial,
+      participacionEditar: parcial,
       nombreEditar: propietarioEdit.nombre,
       apellidoEditar: propietarioEdit.apellidos
     })
-   
+
   }
-/**
- * Metodo que envia los datos del propietario a editar a un servicio.
- */
+  /**
+   * Metodo que envia los datos del propietario a editar a un servicio.
+   */
   ModificarBeneficiario() {
     let porcentaje = 0;
     let suma = 0;
@@ -316,9 +384,9 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       this.propietario.dv = dv
       this.propietario.nombre = this.formEditar.get('nombreEditar').value;
       this.propietario.apellidos = this.formEditar.get('apellidoEditar').value;
-      this.propietario.participacion =parseFloat(this.formEditar.get('participacionEditar').value.replace(',','.')) ;
+      this.propietario.participacion = parseFloat(this.formEditar.get('participacionEditar').value.replace(',', '.'));
       this.propietario.participacionString = this.formEditar.get('participacionEditar').value;
-     
+
       this._beneficiarioService.GuardarPropietario(this.propietario).subscribe(
         (data) => {
           this.ObtenerPropietario();
@@ -335,11 +403,12 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       });
     }
   }
-/**
- * Metodo que elimina a un propietario.
- * @param beneficiario 
- */
+  /**
+   * Metodo que elimina a un propietario.
+   * @param beneficiario 
+   */
   EliminarBeneficiario(beneficiario) {
+
     let id = document.getElementById('modal');
     id.style.display = 'block'
     this.modalService.init(ModalComponent,
@@ -351,8 +420,16 @@ export class DeclaracionbeneficiosComponent implements OnInit {
 
     this.modalService.okEvent.subscribe(data => {
       if (data === true) {
-        this._beneficiarioService.EliminarBeneficiario(beneficiario);
-        this.ObtenerPropietario();
+        this._beneficiarioService.EliminarBeneficiario(beneficiario.idProp).subscribe(
+          result => {
+
+            this.ObtenerPropietario();
+          },
+          error => {
+            console.log(error);
+          }
+        );
+
       }
     });
     this.modalService.cancelEvent.subscribe(data => {

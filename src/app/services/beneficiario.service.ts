@@ -20,22 +20,19 @@ export class BeneficiarioService {
   }
 
   ObtenerPropietario(empresa: Empresa): Observable<any> {
-  
-    
-    const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.obtenerPropietario;
-   
-    let id={
-      "ideDecla":5
-    }
-    let header = new HttpHeaders(RestApi.Headers.headerJson);
-    return this.httCliente.post(url, id, { headers: header });
+
+    const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.ObtenerPropietario;
+
+    let id = { "ideDecla": empresa.ideDecla }
+    let token = RestApi.Headers.headerJsonToken;
+    return this.httCliente.post(url, id, { headers: token });
   }
 
   GuardarPropietario(propietario: Propietario): Observable<any> {
     const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.GuardarPropietario;
-    let header = new HttpHeaders(RestApi.Headers.headerJson);
+    let token = RestApi.Headers.headerJsonToken;
 
-    return this.httCliente.post(url, propietario, { headers: header });
+    return this.httCliente.post(url, propietario, { headers: token });
   }
 
   ObtenerBeneficiarios(): Propietario[] {
@@ -49,10 +46,16 @@ export class BeneficiarioService {
     return this.lstBeneficiarios;
   }
 
-  EliminarBeneficiario(beneficiario): Propietario[] {
-    let rut = beneficiario.rut;
+  EliminarBeneficiario(beneficiario): Observable<any> {
+    const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.EliminarPropietario;
+    let token = RestApi.Headers.headerJsonToken;
+    let id = { "idProp": beneficiario }
+    return this.httCliente.post(url, id, { headers: token });
+  }
 
-    this.lstBeneficiarios = this.lstBeneficiarios.filter(beneficiario => beneficiario.rut !== rut);
-    return this.lstBeneficiarios;
+  EnviarDeclaracion(declaracion){
+    const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.EnviarDeclaracion;
+    let token = RestApi.Headers.headerJsonToken;
+    return this.httCliente.post(url, declaracion, { headers: token });
   }
 }

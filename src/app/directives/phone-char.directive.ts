@@ -24,7 +24,7 @@ export class PhoneCharDirective {
    
     if ((key >= 48 && key <= 57) || // numbers
         (key >= 96 && key <= 105) || // numbers keypad
-        key === 188 ||
+        key === 190 ||
         key === 187 || // SUPR
         key === 46 || // SUPR
         key === 39 || // ARROW RIGHT

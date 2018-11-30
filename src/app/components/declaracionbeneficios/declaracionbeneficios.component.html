@@ -6,7 +6,8 @@
           <p>RUT</p>
         </div>
         <div class="col-md-6">
-           <p class="black">{{empresa.rut | rut}}</p> 
+           <p *ngIf="empresa.rut"class="black">{{empresa.rut | rut}}</p> 
+           <p *ngIf="!empresa.rut"class="black">Sin definir</p> 
         </div>
       </div>
     </div>
@@ -26,19 +27,21 @@
   <form *ngIf="!existsProcess" class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
     <div class="row">
       <div class="col-md-12">
-        <p class="  bold text-justify">Identificación de Propietarios o Controladores (beneficiarios finales).</p>
+        <p class="  bold text-justify">Identificación de Beneficiarios Finales (propietarios o controladores).</p>
 
-        <p class="  text-justify"> Se entenderá como Propietario o Controlador Final, a la persona natural, chilena
+        <p class="  text-justify"> Se entenderá como Beneficiarios Finales (propietarios o controladores), a la persona natural, chilena
           o extranjera,
           que finalmente posee, directa o indirectamente, una participación igual o mayor al 10 % del capital o de
           los
           derechos a voto de su empresa.
-          Asimismo, se entenderá como Propietario o Controlador Final a la persona natural, chilena o extranjera, que
+          <br>
+          <br>
+          Asimismo, se entenderá como Beneficiarios Finales (propietarios o controladores) a la persona natural, chilena o extranjera, que
           sin perjuicio de poseer directa o indirectamente una participación inferior al 10% del capital o de los
           derechos a voto de su empresa, ejerce el control efectivo en la toma de decisiones.</p>
         <div class="info mb-5 mt-5">
           <!--  *ngIf="form.valid && lstPropietario.length<10 && porcentajeAcumulado<100" -->
-          <button (click)="Cambiar()" type="button" [disabled]="!form.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
+          <button (click)="Cambiar()" type="button" [disabled]="lstPropietario.length>9 || porcentajeAcumulado>99"
             class="btn orange" data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Agregar
             Propietario </button>
         </div>
@@ -63,7 +66,7 @@
                 </div>
               </li>
               <li class="point ">
-                <div class="txt_medium_gray upper">{{beneficiario.participacionString}}%</div>
+                <div class="txt_medium_gray upper">{{beneficiario.participacion}}%</div>
               </li>
               <li class="point modify">
                 <i class="fas fa-pencil-alt pr-2" (click)="EditarPropietario(beneficiario)" data-toggle="modal"
@@ -86,7 +89,7 @@
               </li>
               <li class="point upper">
                 <div class="txt_litle">Participación</div>
-                <div class="txt_medium_gray">{{beneficiario.participacionString}}%</div>
+                <div class="txt_medium_gray">{{beneficiario.participacion}}%</div>
               </li>
 
               <li class="point"></li>
@@ -149,7 +152,7 @@
           </div>
           <div class="col-md-6" [class.info--error]="checkIsValid('correo')">
             <label class="info-label">Correo Electronico</label>
-            <input required type="text" class="info-input" placeholder="Ej: email@empresa.cl" formControlName="correo"
+            <input required type="email" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$" class="info-input" placeholder="Ej: email@empresa.cl" formControlName="correo"
               maxlength="50">
             <div *ngIf="!form.get('correo').valid && form.get('correo').touched">
               <span class="text-danger">Correo Incorrecto</span>
@@ -219,7 +222,7 @@
           </div>
           <div class="form-group">
             <label for="recipient-name" class="info-label">Participación:</label>
-            <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5,43 " formControlName="participacion"
+            <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5.43 " formControlName="participacion"
               maxlength="5" appPhoneChar>
             <div *ngIf=" formAgregar.get('participacion').hasError('InvalidPorcentaje') && !formAgregar.get('participacion').valid && formAgregar.get('participacion').touched">
               <span class="text-danger">Participación Incorrecto</span>
@@ -261,7 +264,7 @@
           </div>
           <div class="form-group">
             <label for="recipient-name" class="info-label">Participación:</label>
-            <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5,43 " formControlName="participacionEditar"
+            <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5.43 " formControlName="participacionEditar"
               maxlength="5" appPhoneChar>
             <div *ngIf=" formEditar.get('participacionEditar').hasError('InvalidPorcentaje') && !formEditar.get('participacionEditar').valid && formAgregar.get('participacionEditar').touched">
               <span class="text-danger">Participación Incorrecto</span>
