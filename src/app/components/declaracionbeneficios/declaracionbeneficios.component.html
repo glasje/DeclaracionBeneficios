@@ -1,18 +1,18 @@
 <div class="main">
-  <div class="row">
+ <div class="row">
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-2">
           <p>RUT</p>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6 upper">
            <p *ngIf="empresa.rut"class="black">{{empresa.rut | rut}}</p> 
            <p *ngIf="!empresa.rut"class="black">Sin definir</p> 
         </div>
       </div>
     </div>
     <div class="col-md-12">
-      <div class="row">
+      <div class="row upper">
         <div class="col-md-2">
           <p>Razon Social</p>
         </div>
@@ -22,7 +22,7 @@
       </div>
 
     </div>
-  </div>
+  </div> 
 
   <form *ngIf="!existsProcess" class="m_form" [formGroup]="form" (ngSubmit)="formSubmit()">
     <div class="row">
@@ -126,14 +126,15 @@
         <div class="row">
           <div class="col-md-6" [class.info--error]="checkIsValid('nombre')">
             <label class="info-label">Nombre</label>
-            <input required type="text" class="info-input" placeholder="Ej: juan" formControlName="nombre" maxlength="50">
+            <input required type="text" class="info-input" placeholder="Ej: juan" formControlName="nombre" maxlength="50"
+             appLettersChar>
             <div *ngIf="!form.get('nombre').valid && form.get('nombre').touched">
               <span class="text-danger">Nombre Incorrecto</span>
             </div>
           </div>
           <div class="col-md-6" [class.info--error]="checkIsValid('apellido')">
             <label class="info-label">Apellido</label>
-            <input required type="text" class="info-input" placeholder="Ej: perez" formControlName="apellido" maxlength="50">
+            <input required type="text" class="info-input" placeholder="Ej: perez" formControlName="apellido" maxlength="50" appLettersChar>
             <div *ngIf="!form.get('apellido').valid && form.get('apellido').touched">
               <span class="text-danger">Apellido Incorrecto</span>
             </div>
@@ -145,7 +146,7 @@
           <div class="col-md-6 " [class.info--error]="checkIsValid('relacionEmpresa')">
             <label class="info-label">Relación con la Empresa</label>
             <input required type="text" class="info-input" placeholder="Ej: gerente" formControlName="relacionEmpresa"
-              maxlength="50">
+              maxlength="50" appLettersChar>
             <div *ngIf="!form.get('relacionEmpresa').valid && form.get('relacionEmpresa').touched">
               <span class="text-danger">Relación con la Empresa Incorrecto</span>
             </div>
@@ -164,8 +165,8 @@
 
     <div class="info  mt-5">
       <div *ngIf="!loading">
-        <input type="submit" class="buttons-btn btn" [class.orange]="form.valid" [class.btn--default]=" !form.valid"
-          [disabled]=" !form.valid" value="Enviar Declaración" />
+        <input type="submit" class="buttons-btn btn" [class.orange]="form.valid && lstPropietario.length>0" [class.btn--default]=" !form.valid || lstPropietario.length==0"
+          [disabled]=" !form.valid || lstPropietario.length==0" value="Enviar Declaración" />
       </div>
       <div class="info" *ngIf="loading">
         <loaders-css [loader]="'ball-pulse'" [loaderClass]="'my-loader'"></loaders-css>
@@ -207,7 +208,7 @@
           <div class="form-group">
             <label for="recipient-name" class="info-label">Nombre:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: juan " formControlName="nombreAgregar"
-              maxlength="50">
+              maxlength="50" appLettersChar>
             <div *ngIf="!formAgregar.get('nombreAgregar').valid && formAgregar.get('nombreAgregar').touched">
               <span class="text-danger">Nombre Incorrecto</span>
             </div>
@@ -215,7 +216,7 @@
           <div class="form-group">
             <label for="recipient-name" class="info-label">Apellido :</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: perez" formControlName="apellidoAgregar"
-              maxlength="50">
+              maxlength="50" appLettersChar>
             <div *ngIf="!formAgregar.get('apellidoAgregar').valid && formAgregar.get('apellidoAgregar').touched">
               <span class="text-danger">Apellido Incorrecto</span>
             </div>
@@ -225,7 +226,7 @@
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: 5.43 " formControlName="participacion"
               maxlength="5" appPhoneChar>
             <div *ngIf=" formAgregar.get('participacion').hasError('InvalidPorcentaje') && !formAgregar.get('participacion').valid && formAgregar.get('participacion').touched">
-              <span class="text-danger">Participación Incorrecto</span>
+              <span class="text-danger" >Participación Incorrecto</span>
             </div>
             <div *ngIf="formAgregar.get('participacion').hasError('InvalidSuperior')">
               <span class="text-danger">Participación superior al permitido</span>
@@ -237,6 +238,7 @@
           <div class="info mb-2">
             <button type="submit" *ngIf="!editar" [disabled]="!formAgregar.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
               class="btn orange">Agregar</button>
+              <button id="btnAgregar" data-dismiss="modal" style="display:none"></button>
           </div>
         </form>
 
@@ -249,7 +251,7 @@
           <div class="form-group">
             <label for="recipient-name" class="info-label">Nombre:</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: juan " formControlName="nombreEditar"
-              maxlength="50">
+              maxlength="50" appLettersChar>
             <div *ngIf="!formEditar.get('nombreEditar').valid && formEditar.get('nombreEditar').touched">
               <span class="text-danger">Nombre Incorrecto</span>
             </div>
@@ -257,7 +259,7 @@
           <div class="form-group">
             <label for="recipient-name" class="info-label">Apellido :</label>
             <input type="text" class="info-input" id="recipient-name" placeholder="Ej: perez" formControlName="apellidoEditar"
-              maxlength="50">
+              maxlength="50" appLettersChar>
             <div *ngIf="!formEditar.get('apellidoEditar').valid && formEditar.get('apellidoEditar').touched">
               <span class="text-danger">Apellido Incorrecto</span>
             </div>
@@ -274,7 +276,7 @@
             </div>
           </div>
           <div class="info mb-2">
-            <button type="submit" [disabled]="!formEditar.valid || lstPropietario.length>9 || porcentajeAcumulado>99"
+            <button type="submit" [disabled]="!formEditar.valid || lstPropietario.length>9 || porcentajeAcumulado>99 "
               class="btn orange">Editar</button>
             <button id="btnEditar" data-dismiss="modal" style="display:none"></button>
           </div>
@@ -284,17 +286,3 @@
   </div>
 </div>
 <div>
-
-  <div class="main" *ngIf="existsProcess">
-    <div class="row">
-      <div class="col-md-12">
-        <ul class="li p-0">
-          <li>Declaración de beneficiarios ingresada satisfactoriamente.</li>
-          <li>Declarante: {{declarante.nombreCompleto}}</li>
-          <li>Fecha: {{FechaActual | date:'dd/MM/yyyy HH:mm:ss'}}</li>
-          <br>
-          <li>Ante consultas contactarse al correo <a href="">bfinales@security.cl</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>

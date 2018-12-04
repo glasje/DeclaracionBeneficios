@@ -31,10 +31,12 @@ export class PhoneCharDirective {
         key === 37 || // ARROW LEFT
         key === 9 || // TAB
         key === 8 // DELETE
-         //,
+         
         
     ) {
+
       return true;
+      
     } else {
       return false;
     }

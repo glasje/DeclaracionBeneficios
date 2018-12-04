@@ -12,7 +12,8 @@ export const RestApi = {
       ObtenerPropietario : 'api/Declaracion/ObtenerPropietarios',
       GuardarPropietario : 'api/Declaracion/GuardarPropietario',
       EliminarPropietario: 'api/Declaracion/EliminarPropietario',
-      EnviarDeclaracion  : 'api/Declaracion/EnviarDeclaracion'
+      EnviarDeclaracion  : 'api/Declaracion/EnviarDeclaracion',
+      ObtenerDeclaracion : 'api/Declaracion/ObtenerDeclaracion'
 
     }
   },

@@ -43,13 +43,14 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-      this.ObtenerToken();
+    /* sessionStorage.clear();
+      this.ObtenerToken(); */
   }
   ObtenerToken(){
     this._tokenService.ClearToken(); 
     this._tokenService.GetTokenByService().subscribe(
       data=>{
-        this._tokenService.SetToken(data.token);
+        
       },
       error=>{
         console.log(error);
@@ -67,9 +68,9 @@ export class LoginComponent implements OnInit {
 
   formSubmit() {
     if (this.form.valid) {
-      this.loading = true;
 
-      let rut = this.form.get('rut').value;
+      this.loading = true;
+        let rut = this.form.get('rut').value;
 
       this._loginService.ValidarRut(rut).subscribe(
         data => {
@@ -119,7 +120,6 @@ export class LoginComponent implements OnInit {
       this._loginService.ValidarPassword(this.empresa).subscribe(
         data => {
           this.consultaEmpresa = data;
-
           if (this.consultaEmpresa.exito && 
             this.consultaEmpresa.data.ideEmpNavigation.autorizado &&
               this.consultaEmpresa.mensaje==='OK') {
@@ -134,7 +134,10 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/declaracion']);
             this.loading = false;
 
-          } else{
+          } else if( this.consultaEmpresa.data.estado ==='ENV'){
+            this._tokenService.SetIdDecla(this.consultaEmpresa.data.ideDecla);  
+            this.router.navigate(['/declaracionEnviada']);
+          }else{
             this.loading = false;
             this.error = this.consultaEmpresa.data.ideEmpNavigation.mensaje;
           }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Directive } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { RutValidator, ParcialValidator } from 'src/app/validators';
 import { BeneficiarioService } from 'src/app/services/beneficiario.service';
@@ -49,6 +49,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   private empresa: any;
   //Entidad Declarante
   private declarante: Declarante;
+
+  eliminar: boolean = false;
   /**
    * Constructor que inicia los Servicios y formularios
    * @param _beneficiarioService 
@@ -90,7 +92,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     //Form agregar beneficiario
     this.formAgregar = new FormGroup({
       rutAgregado: new FormControl(null, {
-        validators: [Validators.required, RutValidator.checkRut],
+        validators: [Validators.required, RutValidator.checkRut, RutValidator.Natural],
         updateOn: 'blur'
       }),
       participacion: new FormControl(null, {
@@ -132,12 +134,12 @@ export class DeclaracionbeneficiosComponent implements OnInit {
    * 
    */
   ngOnInit() {
-    this.empresa = this._beneficiarioService.empresa;
-    let idDecla = this._tokenService.GetIdDecla();
-    let idEmp = this._tokenService.GetIdEmp();
-    this.empresa.rut = this.empresa.rut + this.empresa.dv;
-    this.empresa.ideDecla = idDecla;
-    this.empresa.ideEmp = idEmp;
+    /*   this.empresa = this._beneficiarioService.empresa;
+      let idDecla = this._tokenService.GetIdDecla();
+      let idEmp = this._tokenService.GetIdEmp();
+      this.empresa.rut = this.empresa.rut + this.empresa.dv;
+      this.empresa.ideDecla = idDecla;
+      this.empresa.ideEmp = idEmp; */
     this.ObtenerPropietario();
 
     if (this.empresa.declarante) {
@@ -196,15 +198,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
           "email": this.declarante.correo
         }
       };
-      this._beneficiarioService.EnviarDeclaracion(declaracionEnviar).subscribe(
-        data => {
-          this.existsProcess = true;
-          this.loading = false;
-        },
-        error => {
-          this.loading = false;
-        }
-      );
+      this.EnviarDeclaracion(declaracionEnviar);
     } else {
       Object.keys(this.form.controls).forEach(key => {
         this.form.get(key).markAsTouched();
@@ -219,11 +213,11 @@ export class DeclaracionbeneficiosComponent implements OnInit {
 
     this.declarante.rut = rut;
     this.declarante.dv = dv;
-    this.declarante.nombre =this.form.get('nombre').value;
-    this.declarante.nombreCompleto=this.declarante.nombre+' '+this.declarante.apellido;
-    this.declarante.apellido =this.form.get('apellido').value;
-    this.declarante.relacionEmpresa =this.form.get('relacionEmpresa').value;
-    this.declarante.correo =this.form.get('correo').value;
+    this.declarante.nombre = this.form.get('nombre').value;
+    this.declarante.nombreCompleto = this.declarante.nombre + ' ' + this.declarante.apellido;
+    this.declarante.apellido = this.form.get('apellido').value;
+    this.declarante.relacionEmpresa = this.form.get('relacionEmpresa').value;
+    this.declarante.correo = this.form.get('correo').value;
 
   }
   /**
@@ -231,8 +225,8 @@ export class DeclaracionbeneficiosComponent implements OnInit {
    */
   ObtenerPropietario() {
     let dataAux;
-
-    this._beneficiarioService.ObtenerPropietario(this.empresa).subscribe(
+    let ideDecla = this._tokenService.GetIdDecla();
+    this._beneficiarioService.ObtenerPropietario(ideDecla).subscribe(
       (data) => {
         if (data.status === 401) {
           this._router.navigate(['/'])
@@ -297,10 +291,12 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       this.propietario.apellidos = this.formAgregar.get('apellidoAgregar').value;
       this.propietario.participacion = parseFloat(this.formAgregar.get('participacion').value.replace(',', '.'));
       this.propietario.participacionString = this.formAgregar.get('participacion').value;
-
+      this.propietario.ideDecla = parseInt(this._tokenService.GetIdDecla());
+  
       this._beneficiarioService.GuardarPropietario(this.propietario).subscribe(
         (data) => {
           this.ObtenerPropietario();
+          document.getElementById('btnAgregar').click();
           this.formAgregar.reset();
         },
         (error) => {
@@ -346,12 +342,12 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     let propietarioEdit = new Propietario();
     this.editar = true;
     let rut = beneficiario.rut + beneficiario.dv;
-    let parcial = beneficiario.participacionString;
+    let parcial = beneficiario.participacion;
     propietarioEdit.rutCompleto = rut;
     propietarioEdit.nombre = beneficiario.nombre;
     propietarioEdit.apellidos = beneficiario.apellidos;
     propietarioEdit.participacion = beneficiario.participacion;
-
+    this.porcentajeAcumulado = this.porcentajeAcumulado - parseFloat(beneficiario.participacion.toString())
     this.formEditar.setValue({
       rutEditar: propietarioEdit.rutCompleto,
       participacionEditar: parcial,
@@ -366,7 +362,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
   ModificarBeneficiario() {
     let porcentaje = 0;
     let suma = 0;
-    this.CalcularPorcentaje();
+
     porcentaje = this.formEditar.get('participacionEditar').value;
     suma = this.porcentajeAcumulado + parseFloat(porcentaje.toString());
     if (suma > 100) {
@@ -379,7 +375,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       let dv = rut.substring(rut.length - 2, rut.length - 1).replace('.', '').replace('.', '');
       rut = rut.substring(0, rut.length - 1).replace('.', '').replace('.', '');
 
-      this.propietario.ideDecla = this.empresa.ideDecla;
+      this.propietario.ideDecla = parseInt(this._tokenService.GetIdDecla());
       this.propietario.rut = rut;
       this.propietario.dv = dv
       this.propietario.nombre = this.formEditar.get('nombreEditar').value;
@@ -392,6 +388,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
           this.ObtenerPropietario();
           this.formEditar.reset();
           document.getElementById('btnEditar').click();
+          this.CalcularPorcentaje();
         },
         (error) => {
           console.log('error', error);
@@ -408,7 +405,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
    * @param beneficiario 
    */
   EliminarBeneficiario(beneficiario) {
-
+    this.eliminar = true;
     let id = document.getElementById('modal');
     id.style.display = 'block'
     this.modalService.init(ModalComponent,
@@ -419,7 +416,7 @@ export class DeclaracionbeneficiosComponent implements OnInit {
       }, {});
 
     this.modalService.okEvent.subscribe(data => {
-      if (data === true) {
+      if (data === true && this.eliminar) {
         this._beneficiarioService.EliminarBeneficiario(beneficiario.idProp).subscribe(
           result => {
 
@@ -439,4 +436,41 @@ export class DeclaracionbeneficiosComponent implements OnInit {
     });
 
   }
+
+  EnviarDeclaracion(declaracionEnviar) {
+    this.eliminar = false;
+    let id = document.getElementById('modal');
+    id.style.display = 'block'
+    this.modalService.init(ModalComponent,
+      {
+        'message': 'Está seguro que desea enviar la declaración',
+        'okMessage': 'Si',
+        'cancelMessage': 'No'
+      }, {});
+
+    this.modalService.okEvent.subscribe(data => {
+      if (data === true && !this.eliminar) {
+        this._beneficiarioService.EnviarDeclaracion(declaracionEnviar).subscribe(
+          data => {
+            this._beneficiarioService.declarante = declaracionEnviar;
+            this.existsProcess = true;
+            this.loading = false;
+            this._router.navigate(['/declaracionEnviada'])
+          },
+          error => {
+            this.loading = false;
+          }
+        );
+
+      }
+    });
+    this.modalService.cancelEvent.subscribe(data => {
+      if (data === true) {
+        this.loading = false;
+        return;
+      }
+    });
+
+  }
 }
+

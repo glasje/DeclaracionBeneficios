@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Propietario } from '../models/propietario';
 import { RestApi } from 'src/assets/restApi';
 import { Empresa } from '../models/empresa';
+import { Declarante } from '../models/declarante';
 
 @Injectable({
   providedIn: 'root'
@@ -13,31 +14,33 @@ export class BeneficiarioService {
   propietario: Propietario;
   porcentajeAcumulado: number;
   empresa: any;
+  declarante : Declarante
   constructor(private httCliente: HttpClient) {
     this.propietario = new Propietario();
     this.lstBeneficiarios = [];
     this.porcentajeAcumulado = 0;
+    this.declarante= new Declarante();
   }
 
-  ObtenerPropietario(empresa: Empresa): Observable<any> {
+  ObtenerPropietario(ideDecla): Observable<any> {
 
     const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.ObtenerPropietario;
 
-    let id = { "ideDecla": empresa.ideDecla }
-    let token = RestApi.Headers.headerJsonToken;
+    let id = { "ideDecla": parseInt(ideDecla) }
+    let token = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })
     return this.httCliente.post(url, id, { headers: token });
   }
 
   GuardarPropietario(propietario: Propietario): Observable<any> {
     const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.GuardarPropietario;
-    let token = RestApi.Headers.headerJsonToken;
-
+    let token = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })
     return this.httCliente.post(url, propietario, { headers: token });
-  }
-
-  ObtenerBeneficiarios(): Propietario[] {
-
-    return this.lstBeneficiarios;
   }
 
   AgregarBeneficiario(beneficiario): Propietario[] {
@@ -48,14 +51,29 @@ export class BeneficiarioService {
 
   EliminarBeneficiario(beneficiario): Observable<any> {
     const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.EliminarPropietario;
-    let token = RestApi.Headers.headerJsonToken;
+    let token = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })
     let id = { "idProp": beneficiario }
     return this.httCliente.post(url, id, { headers: token });
   }
 
   EnviarDeclaracion(declaracion){
     const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.EnviarDeclaracion;
-    let token = RestApi.Headers.headerJsonToken;
+    let token = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })
     return this.httCliente.post(url, declaracion, { headers: token });
+  }
+
+  ObtenerDeclaracion(ideDeclaracion):Observable<any>{
+    const url = RestApi.Declarante.endPoint + RestApi.Declarante.methods.ObtenerDeclaracion;
+    let token = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })
+    return this.httCliente.post(url, {ideDecla :parseInt(ideDeclaracion)}, { headers: token });
   }
 }

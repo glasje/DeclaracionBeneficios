@@ -17,13 +17,19 @@ export class ParcialValidator {
   static Correcto(control: FormControl): any {
     let numerico = control.value;
     let cadena = "";
-
+    let puntoIndex =-1;
+    let puntoEliminar =-1;
+    let contar =""
+   /*  let regex  = /^\d+(?:\.\d{0,2})$/; */
     if (numerico) {
       cadena = numerico.toString();
-      cadena = cadena.replace('.', ',');
-      
-      if (parseInt(cadena) < 101) {
-
+      puntoIndex= cadena.indexOf('.');
+      if(puntoIndex!=-1){
+        puntoEliminar = cadena.indexOf('.',puntoIndex+1);
+        contar =cadena.substring(puntoIndex+1, cadena.length)
+      }
+     
+      if ((parseFloat(cadena) > 0) && (parseFloat(cadena) < 101) && (puntoEliminar==-1) && (contar.length<3)) {
         return null;
       } else {
         return {

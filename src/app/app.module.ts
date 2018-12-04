@@ -33,6 +33,8 @@ import { LoginService } from './services/login.service';
 import { ModalComponent } from './components/modal/modal.component';
 import { DomService } from './services/dom.service';
 import { ModalService } from './services/modal.service';
+import { LettersCharDirective } from './directives/letters-char.directive';
+import { DeclaracionEnviadaComponent } from './components/declaracion-enviada/declaracion-enviada.component';
 
 registerLocaleData(localeCL);
 
@@ -45,7 +47,10 @@ registerLocaleData(localeCL);
     PhoneCharDirective,
     OnlyNumbersDirective,
     DisableControlDirective,
-    ModalComponent
+    ModalComponent,
+    LettersCharDirective,
+    DeclaracionEnviadaComponent,
+    
   ],
   imports: [
     BrowserModule,

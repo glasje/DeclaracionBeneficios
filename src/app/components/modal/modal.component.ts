@@ -43,6 +43,7 @@ export class ModalComponent{
    */
   okButton() {
     this.modalService.okEvent.next(true);
+
     this.closeModal();
   }
 
@@ -51,6 +52,7 @@ export class ModalComponent{
    */
   closeModal() {
     this.modalService.destroy();
+
   }
 
 }
